@@ -52,13 +52,33 @@
     align-items: center;
 }
 
+.about-photo {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    isolation: isolate;
+}
+
+.about-photo::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 95%;
+    background: #edf0dc;
+    border-radius: 44% 56% 48% 52% / 45% 35% 65% 55%;
+    transform: rotate(-8deg);
+    z-index: -1;
+}
+
 .about-photo img {
     width: 100%;
-    max-width: 300px;
-    height: auto;
-    border-radius: 18px;
+    max-width: 430px;
+    aspect-ratio: 4 / 5;
     object-fit: cover;
+    border-radius: 48% 52% 42% 58% / 36% 42% 58% 64%;
 }
+    
     .about-copy p:not(.eyebrow) { max-width:620px; margin-top:19px; color:var(--muted); }
     .credentials { display:flex; flex-wrap:wrap; gap:9px; margin-top:26px; }
     .credentials span { padding:7px 11px; border:1px solid #b9c8ae; border-radius:99px; color:#38513e; font-size:.84rem; font-weight:600; }
