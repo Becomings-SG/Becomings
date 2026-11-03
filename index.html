@@ -46,6 +46,19 @@
     .section-head > p:last-child { max-width:445px; color:var(--muted); }
     .about { background:var(--paper); }
     .about-grid { display:grid; grid-template-columns:1.06fr .94fr; gap:74px; align-items:center; }
+    .about-photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-photo img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 18px;
+    object-fit: cover;
+}
     .about-copy p:not(.eyebrow) { max-width:620px; margin-top:19px; color:var(--muted); }
     .credentials { display:flex; flex-wrap:wrap; gap:9px; margin-top:26px; }
     .credentials span { padding:7px 11px; border:1px solid #b9c8ae; border-radius:99px; color:#38513e; font-size:.84rem; font-weight:600; }
@@ -124,7 +137,20 @@
     </section>
 
     <section class="about" aria-labelledby="about-title">
-      <div class="wrap about-grid"><div class="about-copy"><p class="eyebrow">About your dietitian</p><h2 id="about-title">Professional care, shaped around your life.</h2><p>I'm Lim Cheau Horng, an Accredited Dietitian in Singapore and Certified Health Coach. I bring more than 15 years of clinical nutrition and renal dietetics experience to personalised, evidence-based nutrition care.</p><p>My role is to work alongside you: making nutrition practical, supporting sustainable lifestyle changes and helping you move towards the version of better health that matters to you.</p><div class="credentials"><span>Accredited Dietitian in Singapore</span><span>Certified Health Coach</span><span>15+ years of clinical nutrition experience</span></div></div><aside class="about-card" aria-label="Becomings care philosophy"><div class="symbol" aria-hidden="true">⌇</div><blockquote>Health is not about becoming someone else. It is about supporting the person you are becoming.</blockquote></aside></div>
+      <div class="wrap about-grid">
+        
+        <div class="about-photo">
+            <img src="cheau-horng-lim.jpg"
+                 alt="Lim Cheau Horng, Accredited Dietitian and Certified Health Coach">
+        </div>
+
+        <div class="about-copy">
+          <p class="eyebrow">About your dietitian</p>
+          <h2 id="about-title">Professional care, shaped around your life.</h2>
+          <p>I'm Lim Cheau Horng, an Accredited Dietitian in Singapore and Certified Health Coach. I bring more than 15 years of clinical nutrition and renal dietetics experience to personalised, evidence-based nutrition care.</p><p>My role is to work alongside you: making nutrition practical, supporting sustainable lifestyle changes and helping you move towards the version of better health that matters to you.</p><div class="credentials"><span>Accredited Dietitian in Singapore</span><span>Certified Health Coach</span><span>15+ years of clinical nutrition experience</span></div></div><aside class="about-card" aria-label="Becomings care philosophy"><div class="symbol" aria-hidden="true">⌇</div><blockquote>Health is not about becoming someone else. It is about supporting the person you are becoming.</blockquote></aside></div>
+        </div>
+
+    </div>  
     </section>
 
     <section class="services" id="services" aria-labelledby="services-title">
