@@ -45,47 +45,82 @@
     .section-head { display:flex; align-items:end; justify-content:space-between; gap:32px; margin-bottom:36px; }
     .section-head > p:last-child { max-width:445px; color:var(--muted); }
     .about { background:var(--paper); }
-    .about-grid { display:grid; grid-template-columns:1.06fr .94fr; gap:74px; align-items:center; }
+    .about-grid {
+      display:grid;
+      grid-template-columns:minmax(260px,.82fr) minmax(0,1.18fr);
+      gap:clamp(42px,7vw,84px);
+      align-items:center;
+    }
     .about-photo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.about-photo {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    isolation: isolate;
-}
-
-.about-photo::before {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 95%;
-    background: #edf0dc;
-    border-radius: 44% 56% 48% 52% / 45% 35% 65% 55%;
-    transform: rotate(-8deg);
-    z-index: -1;
-}
-
-.about-photo img {
-    width: 100%;
-    max-width: 320px;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: 48% 52% 42% 58% / 36% 42% 58% 64%;
-}
-    
+      position:relative;
+      isolation:isolate;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      width:100%;
+      max-width:420px;
+      min-height:430px;
+      margin-inline:auto;
+    }
+    .about-photo::before {
+      content:"";
+      position:absolute;
+      top:7%;
+      left:9%;
+      width:78%;
+      height:84%;
+      border-radius:48% 52% 57% 43% / 42% 38% 62% 58%;
+      background:linear-gradient(145deg,#f0f1e2 0%,#e5ead9 100%);
+      transform:rotate(-17deg);
+      z-index:-3;
+    }
+    .photo-accent--sand {
+      position:absolute;
+      right:5%;
+      bottom:5%;
+      width:57%;
+      height:65%;
+      border-radius:58% 42% 45% 55% / 45% 55% 45% 55%;
+      background:linear-gradient(145deg,#f8eee2,#f1e2d2);
+      transform:rotate(13deg);
+      z-index:-2;
+    }
+    .photo-orbit {
+      position:absolute;
+      width:88%;
+      height:94%;
+      border:1px solid rgba(190,151,91,.78);
+      border-radius:50%;
+      transform:rotate(-23deg);
+      pointer-events:none;
+      z-index:-1;
+    }
+    .photo-dots {
+      position:absolute;
+      right:7%;
+      bottom:12%;
+      width:58px;
+      height:58px;
+      background-image:radial-gradient(#82936b 1.8px,transparent 2.2px);
+      background-size:13px 13px;
+      opacity:.7;
+      pointer-events:none;
+      z-index:0;
+    }
+    .about-photo img {
+      position:relative;
+      z-index:1;
+      display:block;
+      width:100%;
+      max-width:300px;
+      aspect-ratio:4 / 5;
+      object-fit:cover;
+      border-radius:48% 52% 46% 54% / 39% 43% 57% 61%;
+      box-shadow:0 12px 30px rgba(48,65,45,.09);
+    }
     .about-copy p:not(.eyebrow) { max-width:620px; margin-top:19px; color:var(--muted); }
     .credentials { display:flex; flex-wrap:wrap; gap:9px; margin-top:26px; }
     .credentials span { padding:7px 11px; border:1px solid #b9c8ae; border-radius:99px; color:#38513e; font-size:.84rem; font-weight:600; }
-    .about-card { position:relative; overflow:hidden; padding:38px; border-radius:18px; background:var(--mist); }
-    .about-card::after { content:""; position:absolute; right:-26px; bottom:-32px; width:170px; height:170px; border:1px solid #b9c8ae; border-radius:50%; }
-    .about-card .symbol { color:var(--olive); font-family:Fraunces,Georgia,serif; font-size:3.1rem; line-height:.7; }
-    .about-card blockquote { position:relative; z-index:1; margin:24px 0 0; font-family:Fraunces,Georgia,serif; font-size:1.6rem; letter-spacing:-.035em; line-height:1.27; }
     .services { background:var(--ivory); }
     .primary-service { display:grid; grid-template-columns:1fr auto; align-items:center; gap:24px; padding:28px 30px; border:1px solid #c9d2bd; border-radius:14px; background:var(--mist); }
     .primary-service h3 { margin-bottom:6px; font-size:1.22rem; }
@@ -131,7 +166,10 @@
     .contact-actions .email { background:transparent; border-color:#b8cbaa; color:white; }
     footer { padding:24px 0 31px; border-top:1px solid var(--line); color:var(--muted); font-size:.84rem; }
     footer .wrap { display:flex; justify-content:space-between; gap:20px; }
-    @media (max-width:760px) { .wrap { width:min(100% - 32px,1120px); } .nav-link { display:none; } .hero { padding:60px 0 68px; } .hero::after { top:-112px; right:-145px; width:280px; height:280px; } section { padding:58px 0; } .philosophy-grid,.about-grid,.community-box,.booking-grid,.contact-box { display:block; } .philosophy-copy,.about-card,.community-list,.booking-form,.contact-actions { margin-top:32px; } .section-head { display:block; } .section-head > p:last-child { margin-top:14px; } .service-grid { grid-template-columns:repeat(2,1fr); } .steps { grid-template-columns:1fr; } .step { min-height:0; padding:20px 0; } .step + .step { padding-left:0; border-top:1px solid rgba(255,255,255,.3); border-left:0; } .primary-service { display:block; padding:25px; } .primary-service .button { margin-top:19px; } .community-box,.contact-box { padding:30px 25px; } footer .wrap { display:block; } footer p + p { margin-top:7px; } }
+    @media (max-width:760px) {
+      .about-photo { max-width:340px; min-height:360px; margin:0 auto 28px; }
+      .about-photo img { max-width:270px; }
+ .wrap { width:min(100% - 32px,1120px); } .nav-link { display:none; } .hero { padding:60px 0 68px; } .hero::after { top:-112px; right:-145px; width:280px; height:280px; } section { padding:58px 0; } .philosophy-grid,.about-grid,.community-box,.booking-grid,.contact-box { display:block; } .philosophy-copy,.about-card,.community-list,.booking-form,.contact-actions { margin-top:32px; } .section-head { display:block; } .section-head > p:last-child { margin-top:14px; } .service-grid { grid-template-columns:repeat(2,1fr); } .steps { grid-template-columns:1fr; } .step { min-height:0; padding:20px 0; } .step + .step { padding-left:0; border-top:1px solid rgba(255,255,255,.3); border-left:0; } .primary-service { display:block; padding:25px; } .primary-service .button { margin-top:19px; } .community-box,.contact-box { padding:30px 25px; } footer .wrap { display:block; } footer p + p { margin-top:7px; } }
     @media (max-width:410px) { .service-grid,.booking-form { grid-template-columns:1fr; } .hero-actions { display:grid; } .booking-form label.full,.booking-form .button,.booking-form small { grid-column:auto; } }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .button { transition:none; } }
   </style>
@@ -158,19 +196,26 @@
 
     <section class="about" aria-labelledby="about-title">
       <div class="wrap about-grid">
-        
         <div class="about-photo">
-            <img src="cheau-horng-lim.jpg"
-                 alt="Lim Cheau Horng, Accredited Dietitian and Certified Health Coach">
+          <span class="photo-accent--sand" aria-hidden="true"></span>
+          <span class="photo-orbit" aria-hidden="true"></span>
+          <span class="photo-dots" aria-hidden="true"></span>
+          <img src="cheau-horng-lim.jpg"
+               alt="Lim Cheau Horng, Accredited Dietitian and Certified Health Coach">
         </div>
 
         <div class="about-copy">
           <p class="eyebrow">About your dietitian</p>
           <h2 id="about-title">Professional care, shaped around your life.</h2>
-          <p>I'm Lim Cheau Horng, an Accredited Dietitian in Singapore and Certified Health Coach. I bring more than 15 years of clinical nutrition and renal dietetics experience to personalised, evidence-based nutrition care.</p><p>My role is to work alongside you: making nutrition practical, supporting sustainable lifestyle changes and helping you move towards the version of better health that matters to you.</p><div class="credentials"><span>Accredited Dietitian in Singapore</span><span>Certified Health Coach</span><span>15+ years of clinical nutrition experience</span></div></div><aside class="about-card" aria-label="Becomings care philosophy"><div class="symbol" aria-hidden="true">⌇</div><blockquote>Health is not about becoming someone else. It is about supporting the person you are becoming.</blockquote></aside></div>
+          <p>I'm Lim Cheau Horng, an Accredited Dietitian in Singapore and Certified Health Coach. I bring more than 15 years of clinical nutrition and renal dietetics experience to personalised, evidence-based nutrition care.</p>
+          <p>My role is to work alongside you: making nutrition practical, supporting sustainable lifestyle changes and helping you move towards the version of better health that matters to you.</p>
+          <div class="credentials">
+            <span>Accredited Dietitian in Singapore</span>
+            <span>Certified Health Coach</span>
+            <span>15+ years of clinical nutrition experience</span>
+          </div>
         </div>
-
-    </div>  
+      </div>
     </section>
 
     <section class="services" id="services" aria-labelledby="services-title">
