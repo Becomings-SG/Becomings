@@ -166,11 +166,11 @@
     .contact-actions .button:hover,.contact-actions .button:focus-visible { background:#ffdda2; }
     .contact-actions .email { background:transparent; border-color:#b8cbaa; color:white; }
     footer { padding:24px 0 31px; border-top:1px solid var(--line); color:var(--muted); font-size:.84rem; }
-    footer .wrap { display:flex; justify-content:space-between; gap:20px; }
+    footer .wrap { display:flex; align-items:center; justify-content:space-between; gap:24px; }\n    .footer-brand { display:flex; align-items:center; gap:20px; }\n    .footer-logo { display:block; width:clamp(125px,14vw,165px); height:auto; max-height:76px; object-fit:contain; }
     @media (max-width:760px) {
       .about-photo { max-width:340px; min-height:360px; margin:0 auto 28px; }
       .about-photo img { max-width:270px; }
- .wrap { width:min(100% - 32px,1120px); } .nav-link { display:none; } .hero { padding:60px 0 68px; } .hero::after { top:-112px; right:-145px; width:280px; height:280px; } section { padding:58px 0; } .philosophy-grid,.about-grid,.community-box,.booking-grid,.contact-box { display:block; } .philosophy-copy,.about-card,.community-list,.booking-form,.contact-actions { margin-top:32px; } .section-head { display:block; } .section-head > p:last-child { margin-top:14px; } .service-grid { grid-template-columns:repeat(2,1fr); } .steps { grid-template-columns:1fr; } .step { min-height:0; padding:20px 0; } .step + .step { padding-left:0; border-top:1px solid rgba(255,255,255,.3); border-left:0; } .primary-service { display:block; padding:25px; } .primary-service .button { margin-top:19px; } .community-box,.contact-box { padding:30px 25px; } footer .wrap { display:block; } footer p + p { margin-top:7px; } }
+ .wrap { width:min(100% - 32px,1120px); } .nav-link { display:none; } .hero { padding:60px 0 68px; } .hero::after { top:-112px; right:-145px; width:280px; height:280px; } section { padding:58px 0; } .philosophy-grid,.about-grid,.community-box,.booking-grid,.contact-box { display:block; } .philosophy-copy,.about-card,.community-list,.booking-form,.contact-actions { margin-top:32px; } .section-head { display:block; } .section-head > p:last-child { margin-top:14px; } .service-grid { grid-template-columns:repeat(2,1fr); } .steps { grid-template-columns:1fr; } .step { min-height:0; padding:20px 0; } .step + .step { padding-left:0; border-top:1px solid rgba(255,255,255,.3); border-left:0; } .primary-service { display:block; padding:25px; } .primary-service .button { margin-top:19px; } .community-box,.contact-box { padding:30px 25px; } footer .wrap { display:flex; flex-direction:column; align-items:flex-start; gap:14px; } .footer-brand { flex-direction:column; align-items:flex-start; gap:8px; } footer p + p { margin-top:0; } }
     @media (max-width:410px) { .service-grid,.booking-form { grid-template-columns:1fr; } .hero-actions { display:grid; } .booking-form label.full,.booking-form .button,.booking-form small { grid-column:auto; } }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .button { transition:none; } }
   </style>
@@ -256,7 +256,7 @@
       <div class="wrap contact-box"><div><p class="eyebrow">Start your health journey</p><h2 id="contact-title">A conversation can be the first step.</h2></div><div class="contact-actions"><a class="button" href="https://wa.me/6591812351" target="_blank" rel="noopener">WhatsApp +65 9181 2351 <span aria-hidden="true">↗</span></a><a class="button email" href="mailto:hi.becomings@gmail.com">Email hi.becomings@gmail.com</a></div></div>
     </section>
   </main>
-  <footer><div class="wrap"><p>© <span id="year"></span> Becomings</p><p>Personalised nutrition and health coaching in Singapore.</p></div></footer>
+  <footer><div class="wrap"><div class="footer-brand"><img class="footer-logo" src="becomings-logo.png" alt="Becomings — Personalised Nutrition and Lifestyle Care"><p>Personalised nutrition and health coaching in Singapore.</p></div><p>© <span id="year"></span> Becomings</p></div></footer>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
     document.getElementById('booking-form').addEventListener('submit', function (event) {
