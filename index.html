@@ -27,8 +27,9 @@
     .button.outline:hover,.button.outline:focus-visible { background:var(--sage); }
     header { padding:21px 0; }
     nav { display:flex; align-items:center; justify-content:space-between; gap:18px; }
-    .brand { display:flex; align-items:center; gap:9px; font-family:Fraunces,Georgia,serif; color:var(--olive); font-size:1.55rem; font-weight:500; letter-spacing:-.06em; text-decoration:none; }
-    .brand-mark { width:21px; height:21px; border:1.5px solid var(--olive); border-radius:50% 50% 50% 7px; transform:rotate(-34deg); }
+    .brand { display:inline-flex; align-items:center; flex:none; text-decoration:none; }
+    .brand-logo { display:block; width:clamp(150px,17vw,210px); height:auto; max-height:100px; object-fit:contain; }
+    header { padding:14px 0; }
     .nav-link { font-size:.9rem; }
     .hero { position:relative; overflow:hidden; padding:86px 0 96px; }
     .hero::after { content:""; position:absolute; z-index:-1; top:-195px; right:-165px; width:495px; height:495px; border-radius:50%; background:radial-gradient(circle at 30% 66%,#e6ba69 0 3%,transparent 3.4%),radial-gradient(circle at 51% 48%,#8da37b 0 8%,transparent 8.4%),radial-gradient(circle at 67% 70%,#e8d2a5 0 8%,transparent 8.4%),#e8eddf; opacity:.76; }
@@ -177,7 +178,7 @@
 <body>
   <header class="wrap">
     <nav aria-label="Main navigation">
-      <a class="brand" href="#top" aria-label="Becomings home"><span class="brand-mark" aria-hidden="true"></span>becomings.</a>
+      <a class="brand" href="#top" aria-label="Becomings — Personalised Nutrition and Lifestyle Care"><img class="brand-logo" src="becomings-logo.png" alt="Becomings — Personalised Nutrition and Lifestyle Care"></a>
       <a class="button nav-link" href="#booking">Start your health journey</a>
     </nav>
   </header>
