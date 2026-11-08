@@ -31,6 +31,12 @@
     .brand-logo { display:block; width:clamp(330px,33vw,405px); height:auto; max-height:177px; object-fit:contain; }
     header { padding:14px 0; }
     .nav-link { font-size:.9rem; }
+    .nav-tools { display:flex; align-items:center; gap:14px; }
+    .language-switch { display:inline-flex; gap:3px; padding:4px; border:1px solid var(--line); border-radius:99px; background:var(--paper); }
+    .language-switch button { border:0; border-radius:99px; padding:7px 11px; background:transparent; color:var(--green); font:600 .82rem "DM Sans",Arial,sans-serif; cursor:pointer; }
+    .language-switch button[aria-pressed="true"] { background:var(--green); color:white; }
+    html[lang="zh-CN"] body { font-family:"Noto Sans SC","Microsoft YaHei",Arial,sans-serif; }
+    html[lang="zh-CN"] h1,html[lang="zh-CN"] h2 { font-family:"Noto Serif SC","Songti SC",serif; letter-spacing:0; line-height:1.2; }
     .hero { padding:62px 0 78px; }
     .hero-inner { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(260px,.75fr); align-items:center; gap:clamp(28px,5vw,68px); }
     .hero-content { min-width:0; }
@@ -190,7 +196,7 @@
   <header class="wrap">
     <nav aria-label="Main navigation">
       <a class="brand" href="#top" aria-label="Becomings — Personalised Nutrition and Lifestyle Care"><img class="brand-logo" src="becomings-logo.png" alt="Becomings — Personalised Nutrition and Lifestyle Care"></a>
-      <a class="button nav-link" href="#booking">Start your health journey</a>
+      <div class="nav-tools"><div class="language-switch" role="group" aria-label="Choose language"><button type="button" data-language="en" aria-pressed="true">EN</button><button type="button" data-language="zh-CN" aria-pressed="false">中文</button></div><a class="button nav-link" href="#booking">Start your health journey</a></div>
     </nav>
   </header>
   <main id="top">
@@ -274,152 +280,29 @@
   </main>
   <footer><div class="wrap"><div class="footer-brand"><img class="footer-logo" src="becomings-logo.png" alt="Becomings — Personalised Nutrition and Lifestyle Care"><p>Personalised nutrition and health coaching in Singapore.</p></div><p>© <span id="year"></span> Becomings</p></div></footer>
   <script>
-    const translations = {
-      "zh-CN": {
-        pageTitle:"Becomings｜新加坡营养师与健康管理",
-        metaDescription:"Becomings 提供个性化营养指导与健康管理服务，以循证营养为基础，陪伴您迈向更健康的生活。",
-        navCta:"开启健康之旅",
-        heroEyebrow:"新加坡营养师与健康管理服务",
-        heroTitle:"<strong>变得更健康。</strong><br>感觉更好。<br>成为更好的自己。",
-        heroSupporting:"为人生不同阶段的您，提供个性化营养指导与健康管理。",
-        heroPrimary:"开启您的健康之旅 <span aria-hidden=\"true\">↗</span>",
-        heroSecondary:"了解我们的服务",
-        experience:"拥有超过15年的临床营养与肾脏营养经验",
-        philosophyEyebrow:"Becomings 的理念",
-        philosophyTitle:"我们不被今天的自己所定义。我们始终在成长，成为更好的自己。",
-        philosophyP1:"我们不断成长、改变，并在自己身上发现新的可能。随着人生阶段的变化，我们的健康需求、目标与优先事项也会随之改变。",
-        philosophyP2:"在 Becomings，我们相信健康没有一套适合所有人的方法。通过循证营养、个性化健康管理与可持续的生活方式调整，我们陪伴您建立适合自己生活的健康习惯，按照自己的步伐，一步一步前进。",
-        aboutEyebrow:"认识您的营养师",
-        aboutTitle:"以专业为本，为您的生活量身打造。",
-        aboutP1:"我是 Lim Cheau Horng，新加坡认证营养师及认证健康教练。我拥有超过15年的临床营养与肾脏营养经验，致力于提供个性化、以科学证据为基础的营养指导。",
-        aboutP2:"我会与您并肩同行，让营养建议更贴近日常生活，协助您建立可持续的生活习惯，逐步迈向对您真正重要的健康目标。",
-        credential1:"新加坡认证营养师",
-        credential2:"认证健康教练",
-        credential3:"15年以上临床营养经验",
-        servicesEyebrow:"营养指导与健康管理",
-        servicesTitle:"为您的健康旅程提供一对一支持。",
-        servicesIntro:"一对一咨询是 Becomings 服务的核心。我们将循证营养建议转化为切合您日常生活、真正可实践的改变。",
-        primaryServiceTitle:"一对一营养咨询",
-        primaryServiceText:"根据您的健康状况、个人喜好与目标，提供个性化营养指导及实用的健康管理支持。",
-        getInTouch:"联系我们",
-        service1Title:"肾脏与肾病营养",
-        service1Text:"为慢性肾病、透析及肾脏健康饮食提供营养支持。",
-        service2Title:"糖尿病与血糖管理",
-        service2Text:"为糖尿病前期及第二型糖尿病提供营养指导。",
-        service3Title:"心脏与代谢健康",
-        service3Text:"关注胆固醇、脂肪肝及心血管疾病风险。",
-        service4Title:"体重管理",
-        service4Text:"支持健康减重及体重增加。",
-        service5Title:"肠胃与消化健康",
-        service5Text:"针对腹胀、便秘及肠易激综合征相关饮食提供指导。",
-        service6Title:"女性健康",
-        service6Text:"关注更年期、骨骼与肌肉健康。",
-        service7Title:"健康老龄化",
-        service7Text:"帮助维持肌肉、体力与生活自理能力。",
-        approachEyebrow:"我的服务方式",
-        approachTitle:"了解需求 · 个性化规划 · 持续支持",
-        step1Title:"了解需求",
-        step1Text:"从您的健康状况、生活习惯、个人喜好与目标出发，而不是套用千篇一律的方案。",
-        step2Title:"个性化规划",
-        step2Text:"与您共同制定实用且有科学依据的营养策略，配合您的需要与实际情况。",
-        step3Title:"持续支持",
-        step3Text:"通过健康管理指导，帮助您建立可持续的习惯、克服过程中的困难，并按照自己的步伐稳步前进。",
-        communityEyebrow:"团体与机构服务",
-        communityTitle:"贴近社区需求的健康教育。",
-        communityText:"Becomings 也为企业与社区提供以科学证据为基础的营养教育，以实用、包容的方式陪伴不同群体建立健康习惯。",
-        community1:"健康专题讲座",
-        community2:"营养工作坊",
-        community3:"社区健康教育",
-        bookingEyebrow:"预约咨询",
-        bookingTitle:"从一次免费的简短交流开始。",
-        bookingText:"您可以选择15分钟的初步交流，或提交完整咨询预约申请。提交后将通过 WhatsApp 与您联系，一起确认合适的时间。",
-        appointmentLabel:"预约类型",
-        option1:"15分钟免费初步交流",
-        option2:"首次咨询 — 60分钟",
-        option3:"后续咨询 — 45分钟",
-        option4:"生活方式基础计划",
-        nameLabel:"您的姓名",
-        dateLabel:"希望预约的日期",
-        timeLabel:"希望的时间或可预约时段",
-        timePlaceholder:"例如：平日早上",
-        bookingButton:"通过 WhatsApp 提交预约申请 <span aria-hidden=\"true\">↗</span>",
-        bookingNote:"此操作会打开预先填写好内容的 WhatsApp 信息。收到回复并确认后，预约才正式成立。",
-        contactEyebrow:"开启您的健康之旅",
-        contactTitle:"一次交流，可以是改变的第一步。",
-        whatsappButton:"WhatsApp +65 9181 2351 <span aria-hidden=\"true\">↗</span>",
-        emailButton:"电邮 hi.becomings@gmail.com",
-        footerText:"新加坡个性化营养指导与健康管理服务。"
-      }
-    };
-
-    function setLanguage(language) {
-      const isChinese = language === "zh-CN";
-      document.documentElement.lang = language;
-      document.querySelectorAll("[data-i18n]").forEach((element) => {
-        const key = element.dataset.i18n;
-        if (isChinese && translations["zh-CN"][key]) {
-          element.innerHTML = translations["zh-CN"][key];
-        } else if (element.dataset.enHtml) {
-          element.innerHTML = element.dataset.enHtml;
-        }
-      });
-      document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
-        const key = element.dataset.i18nPlaceholder;
-        element.placeholder = isChinese ? translations["zh-CN"][key] : "For example, weekday mornings";
-      });
-      document.querySelectorAll("[data-language]").forEach((button) => {
-        button.setAttribute("aria-pressed", String(button.dataset.language === language));
-      });
-      document.title = isChinese ? translations["zh-CN"].pageTitle : "Becomings | Dietitian & Health Coach in Singapore";
-      document.querySelector('meta[name="description"]').content = isChinese ? translations["zh-CN"].metaDescription : "Becomings is a Singapore dietitian and health coaching practice offering personalised, evidence-based nutrition care for the many versions of you yet to come.";
-      document.querySelectorAll("[data-i18n-label]").forEach((label) => {
-        const key = label.dataset.i18nLabel;
-        label.firstChild.textContent = isChinese ? translations["zh-CN"][key] : label.dataset.enLabel;
-      });
-      document.querySelectorAll("[data-i18n-option]").forEach((option) => {
-        const key = option.dataset.i18nOption;
-        option.textContent = isChinese ? translations["zh-CN"][key] : option.dataset.enText;
-      });
+    const zh = {".hero .eyebrow":"新加坡营养师与健康管理服务","#hero-title":"<strong>变得更健康。</strong><br>感觉更好。<br>成为更好的自己。",".hero .supporting":"为人生不同阶段的您，提供个性化营养指导与健康管理。",".hero-actions .button:first-child":"开启您的健康之旅 ↗",".hero-actions .button:last-child":"了解我们的服务",".experience":"拥有超过15年的临床营养与肾脏营养经验",".philosophy .eyebrow":"Becomings 的理念","#philosophy-title":"我们不被今天的自己所定义。我们始终在成长，成为更好的自己。",".philosophy-copy p:first-child":"我们不断成长、改变，并在自己身上发现新的可能。随着人生阶段的变化，我们的健康需求、目标与优先事项也会随之改变。",".philosophy-copy p:last-child":"在 Becomings，我们相信健康没有一套适合所有人的方法。通过循证营养、个性化健康管理与可持续的生活方式调整，我们陪伴您建立适合自己生活的健康习惯，按照自己的步伐，一步一步前进。",".about-copy .eyebrow":"认识您的营养师","#about-title":"以专业为本，为您的生活量身打造。",".about-copy p:nth-of-type(2)":"我是 Lim Cheau Horng，新加坡认证营养师及认证健康教练。我拥有超过15年的临床营养与肾脏营养经验，致力于提供个性化、以科学证据为基础的营养指导。",".about-copy p:nth-of-type(3)":"我会与您并肩同行，让营养建议更贴近日常生活，协助您建立可持续的生活习惯，逐步迈向对您真正重要的健康目标。",".credentials span:nth-child(1)":"新加坡认证营养师",".credentials span:nth-child(2)":"认证健康教练",".credentials span:nth-child(3)":"15年以上临床营养经验",".services .eyebrow":"营养指导与健康管理","#services-title":"为您的健康旅程提供一对一支持。",".section-head > p":"一对一咨询是 Becomings 服务的核心。我们将循证营养建议转化为切合您日常生活、真正可实践的改变。",".primary-service h3":"一对一营养咨询",".primary-service p":"根据您的健康状况、个人喜好与目标，提供个性化营养指导及实用的健康管理支持。",".primary-service .button":"联系我们",".service:nth-child(1) h3":"肾脏与肾病营养",".service:nth-child(1) p":"为慢性肾病、透析及肾脏健康饮食提供营养支持。",".service:nth-child(2) h3":"糖尿病与血糖管理",".service:nth-child(2) p":"为糖尿病前期及第二型糖尿病提供营养指导。",".service:nth-child(3) h3":"心脏与代谢健康",".service:nth-child(3) p":"关注胆固醇、脂肪肝及心血管疾病风险。",".service:nth-child(4) h3":"体重管理",".service:nth-child(4) p":"支持健康减重及体重增加。",".service:nth-child(5) h3":"肠胃与消化健康",".service:nth-child(5) p":"针对腹胀、便秘及肠易激综合征相关饮食提供指导。",".service:nth-child(6) h3":"女性健康",".service:nth-child(6) p":"关注更年期、骨骼与肌肉健康。",".service:nth-child(7) h3":"健康老龄化",".service:nth-child(7) p":"帮助维持肌肉、体力与生活自理能力。",".approach .eyebrow":"我的服务方式","#approach-title":"了解需求 · 个性化规划 · 持续支持",".step:nth-child(1) h3":"了解需求",".step:nth-child(1) p:not(.number)":"从您的健康状况、生活习惯、个人喜好与目标出发，而不是套用千篇一律的方案。",".step:nth-child(2) h3":"个性化规划",".step:nth-child(2) p:not(.number)":"与您共同制定实用且有科学依据的营养策略，配合您的需要与实际情况。",".step:nth-child(3) h3":"持续支持",".step:nth-child(3) p:not(.number)":"通过健康管理指导，帮助您建立可持续的习惯、克服过程中的困难，并按照自己的步伐稳步前进。",".community .eyebrow":"团体与机构服务","#community-title":"贴近社区需求的健康教育。",".community-box p:not(.eyebrow)":"Becomings 也为企业与社区提供以科学证据为基础的营养教育，以实用、包容的方式陪伴不同群体建立健康习惯。",".community-list span:nth-child(1)":"健康专题讲座",".community-list span:nth-child(2)":"营养工作坊",".community-list span:nth-child(3)":"社区健康教育",".booking .eyebrow":"预约咨询","#booking-title":"从一次免费的简短交流开始。",".booking-copy p:not(.eyebrow)":"您可以选择15分钟的初步交流，或提交完整咨询预约申请。提交后将通过 WhatsApp 与您联系，一起确认合适的时间。",".booking-form button":"通过 WhatsApp 提交预约申请 ↗",".booking-form small":"此操作会打开预先填写好内容的 WhatsApp 信息。收到回复并确认后，预约才正式成立。",".contact .eyebrow":"开启您的健康之旅","#contact-title":"一次交流，可以是改变的第一步。",".contact-actions .button:first-child":"WhatsApp +65 9181 2351 ↗",".contact-actions .email":"电邮 hi.becomings@gmail.com",".footer-brand p":"新加坡个性化营养指导与健康管理服务。",".nav-link":"开启健康之旅"};
+    const original = {};
+    Object.keys(zh).forEach(function(selector){const el=document.querySelector(selector);if(el)original[selector]=el.innerHTML;});
+    const labels=Array.from(document.querySelectorAll(".booking-form label")).map(function(el){return el.firstChild.textContent.trim();});
+    const options=Array.from(document.querySelectorAll("#appointment option")).map(function(el){return el.textContent;});
+    const placeholder=document.getElementById("preferred-time").placeholder;
+    function setLanguage(lang){
+      const chinese=lang==="zh-CN";
+      Object.keys(zh).forEach(function(selector){const el=document.querySelector(selector);if(el)el.innerHTML=chinese?zh[selector]:original[selector];});
+      const zlabels=["预约类型","您的姓名","希望预约的日期","希望的时间或可预约时段"];
+      document.querySelectorAll(".booking-form label").forEach(function(el,i){if(el.firstChild.nodeType===Node.TEXT_NODE)el.firstChild.textContent=chinese?zlabels[i]:labels[i]+" ";});
+      const zoptions=["15分钟免费初步交流","首次咨询 — 60分钟","后续咨询 — 45分钟","生活方式基础计划"];
+      document.querySelectorAll("#appointment option").forEach(function(el,i){el.textContent=chinese?zoptions[i]:options[i];});
+      document.getElementById("preferred-time").placeholder=chinese?"例如：平日早上":placeholder;
+      document.documentElement.lang=lang;
+      document.title=chinese?"Becomings｜新加坡营养师与健康管理":"Becomings | Dietitian & Health Coach in Singapore";
+      document.querySelector("meta[name=description]").content=chinese?"Becomings 提供个性化营养指导与健康管理服务，以循证营养为基础，陪伴您迈向更健康的生活。":"Becomings is a Singapore dietitian and health coaching practice offering personalised, evidence-based nutrition care for the many versions of you yet to come.";
+      document.querySelectorAll("[data-language]").forEach(function(btn){btn.setAttribute("aria-pressed",String(btn.dataset.language===lang));});
     }
-
-    document.querySelectorAll("[data-i18n]").forEach((element) => {
-      element.dataset.enHtml = element.innerHTML;
-    });
-    document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
-      element.dataset.enPlaceholder = element.placeholder;
-    });
-    document.querySelectorAll("label [data-i18n]").forEach((element) => {
-      element.dataset.enLabel = element.textContent;
-    });
-    document.querySelectorAll("[data-i18n]").forEach((element) => {
-      if (element.matches("label")) element.dataset.enLabel = element.firstChild.textContent.trim();
-    });
-    document.querySelectorAll("label").forEach((label) => {
-      const span = label.querySelector("[data-i18n]");
-      if (span) {
-        label.dataset.i18nLabel = span.dataset.i18n;
-        label.dataset.enLabel = span.textContent;
-      }
-    });
-    document.querySelectorAll("option[data-i18n]").forEach((option) => {
-      option.dataset.i18nOption = option.dataset.i18n;
-      option.dataset.enText = option.textContent;
-    });
-    document.querySelectorAll("[data-language]").forEach((button) => {
-      button.addEventListener("click", () => setLanguage(button.dataset.language));
-    });
+    document.querySelectorAll("[data-language]").forEach(function(btn){btn.addEventListener("click",function(){setLanguage(btn.dataset.language);});});
     setLanguage("en");
-
-    document.getElementById('year').textContent = new Date().getFullYear();
-    document.getElementById('booking-form').addEventListener('submit', function (event) {
-      event.preventDefault();
-      const appointment = document.getElementById('appointment').value;
-      const name = document.getElementById('client-name').value.trim();
-      const date = document.getElementById('preferred-date').value;
-      const time = document.getElementById('preferred-time').value.trim();
-      const message = `Hello, I would like to request a ${appointment}. My name is ${name}. My preferred date is ${date}, and my preferred time/availability is ${time}.`;
-      window.open(`https://wa.me/6591812351?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
-    });
+    document.getElementById("year").textContent=new Date().getFullYear();
+    document.getElementById("booking-form").addEventListener("submit",function(event){event.preventDefault();const chinese=document.documentElement.lang==="zh-CN";const appointment=document.getElementById("appointment").selectedOptions[0].textContent;const name=document.getElementById("client-name").value.trim();const date=document.getElementById("preferred-date").value;const time=document.getElementById("preferred-time").value.trim();const message=chinese?"您好，我想预约："+appointment+"。姓名："+name+"。希望日期："+date+"。方便的时间："+time+"。谢谢！":"Hello, I would like to request a "+appointment+". My name is "+name+". My preferred date is "+date+", and my preferred time/availability is "+time+".";window.open("https://wa.me/6591812351?text="+encodeURIComponent(message),"_blank","noopener");});
   </script>
 </body>
 </html>
