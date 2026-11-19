@@ -85,8 +85,8 @@ function render(){
 }
 function valid(n,min,max){return Number.isFinite(n)&&n>=min&&n<=max}
 function updateTotals(){
- const sums=nutrients.map((_,i)=>foods.reduce((sum,f)=>sum+(calc(f)[i]??0),0));
- document.getElementById("totals").innerHTML=nutrients.map((n,i)=>`<tr><td>${n}</td><td>${fmt(sums[i])}</td><td>${units[i]}</td></tr>`).join("");
+ const sums=nutrients.map((_,i)=>foods.some(f=>f.per100[i]===null||f.per100[i]===undefined)?null:foods.reduce((sum,f)=>sum+calc(f)[i],0));
+ document.getElementById("totals").innerHTML=nutrients.map((n,i)=>`<tr><td>${n}</td><td>${sums[i]===null?"Incomplete source data":fmt(sums[i])}</td><td>${units[i]}</td></tr>`).join("");
  document.getElementById("calcStatus").textContent="Recalculated using current gram weights. Missing values in a live source will remain unavailable, not zero.";
 }
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
