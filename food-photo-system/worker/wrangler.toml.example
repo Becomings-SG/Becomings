@@ -2,15 +2,31 @@ name = "becomings-food-photo-webhook"
 main = "src/index.ts"
 compatibility_date = "2026-11-20"
 
-# Copy this file to wrangler.toml locally and replace placeholders.
-# Never commit real account IDs, database IDs, access tokens or secrets.
+# Create these resources in Cloudflare before deployment.
+# Add real values locally only. Never commit secrets.
 
 [[queues.producers]]
 binding = "INGEST_QUEUE"
 queue = "becomings-food-photo-ingest"
 
-# Add the D1 binding when creating the database in the next task:
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "becomings-food-photo"
-# database_id = "REPLACE_WITH_D1_DATABASE_ID"
+[[queues.consumers]]
+queue = "becomings-food-photo-ingest"
+max_batch_size = 1
+max_batch_timeout = 5
+max_retries = 5
+
+[[d1_databases]]
+binding = "DB"
+database_name = "becomings-food-photo"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# Required Worker secrets (set with wrangler secret put):
+# META_VERIFY_TOKEN
+# META_APP_SECRET
+# WA_ID_HASH_SECRET
+# WHATSAPP_ACCESS_TOKEN
+# WHATSAPP_PHONE_NUMBER_ID
+# META_GRAPH_API_VERSION (e.g. vXX.X, using a currently supported version)
+# GOOGLE_OAUTH_CLIENT_ID
+# GOOGLE_OAUTH_CLIENT_SECRET
+# GOOGLE_OAUTH_REFRESH_TOKEN
