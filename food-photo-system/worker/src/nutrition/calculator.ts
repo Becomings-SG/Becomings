@@ -2,12 +2,45 @@ import {
   NUTRIENT_UNITS,
   type CalculatedNutrient,
   type NutrientCode,
-  type NutrientValuesPer100g
+  type NutrientValuesPer100g,
+  type PortionSelection
 } from "./types";
 
 /**
- * Calculate nutrient amounts from source values expressed per 100 g edible portion.
- * Missing source values remain null; they are never silently converted to zero.
+ * Convert a human serving description into edible grams.
+ * The source's per-100-g nutrient basis remains unchanged for traceability.
+ */
+export function resolvePortionGrams(portion: PortionSelection): number {
+  if (portion.actual_edible_grams !== undefined) {
+    if (!Number.isFinite(portion.actual_edible_grams) ||
+        portion.actual_edible_grams < 0 ||
+        portion.actual_edible_grams > 5000) {
+      throw new Error("INVALID_ACTUAL_EDIBLE_GRAMS");
+    }
+    return portion.actual_edible_grams;
+  }
+
+  if (!Number.isFinite(portion.quantity) || portion.quantity < 0 || portion.quantity > 100) {
+    throw new Error("INVALID_PORTION_QUANTITY");
+  }
+
+  if (portion.unit === "gram") return portion.quantity;
+
+  const referenceGrams = portion.reference_grams_per_unit;
+  if (typeof referenceGrams !== "number" ||
+      !Number.isFinite(referenceGrams) ||
+      referenceGrams <= 0 ||
+      referenceGrams > 5000) {
+    throw new Error("PORTION_REFERENCE_GRAMS_REQUIRED");
+  }
+
+  return portion.quantity * referenceGrams;
+}
+
+/**
+ * Nutrient composition is stored per 100 g edible portion.
+ * User-facing quantities can be servings, shares, bowls, pieces, etc.
+ * Missing source values remain null, never zero.
  */
 export function calculateNutrients(
   values: NutrientValuesPer100g,
@@ -29,6 +62,14 @@ export function calculateNutrients(
       status: available ? "available" : "missing"
     };
   });
+}
+
+export function calculatePortionNutrients(
+  values: NutrientValuesPer100g,
+  portion: PortionSelection
+): { edible_grams: number; nutrients: CalculatedNutrient[] } {
+  const edible_grams = resolvePortionGrams(portion);
+  return { edible_grams, nutrients: calculateNutrients(values, edible_grams) };
 }
 
 export function sumMealNutrients(
