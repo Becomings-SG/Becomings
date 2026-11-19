@@ -1,0 +1,16 @@
+name = "becomings-food-photo-webhook"
+main = "src/index.ts"
+compatibility_date = "2026-11-20"
+
+# Copy this file to wrangler.toml locally and replace placeholders.
+# Never commit real account IDs, database IDs, access tokens or secrets.
+
+[[queues.producers]]
+binding = "INGEST_QUEUE"
+queue = "becomings-food-photo-ingest"
+
+# Add the D1 binding when creating the database in the next task:
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "becomings-food-photo"
+# database_id = "REPLACE_WITH_D1_DATABASE_ID"
