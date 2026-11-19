@@ -38,6 +38,26 @@ This module is intentionally isolated from the existing static Becomings website
 
 This remains a development scaffold. It has not been deployed or integration-tested. No client data has been processed.
 
+### Task 3: nutrition data model and calculation scaffold
+
+- Structured vision output for visible foods and estimated edible grams only.
+- Deterministic nutrient calculation on a per-100-g edible basis.
+- Linked household portion quantity and gram-weight conversion helpers.
+- USDA FoodData Central search/detail adapter.
+- Food-source licensing and provenance policy for SG FoodID, MyFCD and USDA.
+- D1 tables for food items, source cache, item nutrient results and meal totals.
+
+### Task 4: dietitian dashboard interaction prototype
+
+- Standalone HTML prototype in `dashboard/index.html`.
+- Two-way editable portion quantity and edible gram weight.
+- Editable serving reference weight, with selected portion preserved.
+- Expandable source-record inspection panel and per-100-g nutrient table.
+- Live illustrative totals, food component add/remove and review controls.
+- Portion and review audit-history migration in `database/migrations/0004_portion_audit.sql`.
+
+The dashboard is a synthetic-data UI prototype only. It is not authenticated, connected to D1 or Drive, or safe for real client information. Approve/reject controls do not persist a decision. The dashboard has not been browser-tested or clinically validated.
+
 ## Google Drive account setup
 
 Create a dedicated Google account for Becomings and enable Google Drive API in a Google Cloud project. Configure an OAuth consent screen and OAuth client. Obtain an offline refresh token using the narrow `drive.file` scope. The application creates its own root folder and client folders, so it does not need broad access to the user's existing Drive files.
@@ -52,7 +72,7 @@ Do not register, migrate, disconnect or otherwise change the live number until M
 
 Apply:
 - `database/schema.sql`
-- `database/migrations/0002_add_client_drive_folder.sql`
+- `database/migrations/0002_add_client_drive_folder.sql`\n- `database/migrations/0003_add_nutrition_engine.sql`\n- `database/migrations/0004_portion_audit.sql`
 
 The existing client onboarding process must create a client row and a current `granted` consent record before a sender's photos can be processed. Raw phone numbers are not stored in this database; the sender hash must be generated using the same HMAC secret as the webhook.
 
