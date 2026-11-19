@@ -13,6 +13,7 @@ export const NUTRIENT_UNITS = {
 
 export type NutrientCode = keyof typeof NUTRIENT_UNITS;
 export type PortionConfidence = "low" | "medium" | "high";
+export type PortionUnit = "serving" | "share" | "bowl" | "cup" | "piece" | "slice" | "tablespoon" | "teaspoon" | "gram" | "custom";
 
 export interface VisionFoodItem {
   vision_food_name: string;
@@ -42,11 +43,30 @@ export interface NutrientValuesPer100g {
   phosphorus_mg?: number | null;
 }
 
+export interface FoodServingReference {
+  label: string;
+  unit: PortionUnit;
+  grams_per_unit: number;
+  basis: "database" | "dietitian_defined" | "measured" | "estimated";
+  source_description?: string;
+}
+
+export interface PortionSelection {
+  quantity: number;
+  unit: PortionUnit;
+  reference_grams_per_unit?: number;
+  actual_edible_grams?: number;
+  reference_label?: string;
+  basis: "database" | "dietitian_defined" | "measured" | "estimated";
+}
+
 export interface FoodDatabaseMatch {
   source: "USDA_FDC" | "SG_FOODID" | "MYFCD" | "CUSTOM";
   source_food_id: string;
   food_name: string;
+  original_description?: string;
   data_type?: string;
+  serving_references?: FoodServingReference[];
   nutrients_per_100g: NutrientValuesPer100g;
   licence_label: string;
   source_url?: string;
