@@ -7,48 +7,86 @@ import {
 } from "./types";
 
 /**
- * Convert a human serving description into edible grams.
- * The source's per-100-g nutrient basis remains unchanged for traceability.
+ * Portion quantity and edible grams are two representations of one value.
+ * A source/dietitian reference gram weight links the two fields.
  */
-export function resolvePortionGrams(portion: PortionSelection): number {
-  if (portion.actual_edible_grams !== undefined) {
-    if (!Number.isFinite(portion.actual_edible_grams) ||
-        portion.actual_edible_grams < 0 ||
-        portion.actual_edible_grams > 5000) {
-      throw new Error("INVALID_ACTUAL_EDIBLE_GRAMS");
-    }
-    return portion.actual_edible_grams;
+export interface LinkedPortion {
+  quantity: number;
+  unit: PortionSelection["unit"];
+  grams_per_unit: number;
+  edible_grams: number;
+  basis: PortionSelection["basis"];
+}
+
+function validateNonNegative(value: number, code: string, max: number): void {
+  if (!Number.isFinite(value) || value < 0 || value > max) {
+    throw new Error(code);
   }
+}
 
-  if (!Number.isFinite(portion.quantity) || portion.quantity < 0 || portion.quantity > 100) {
-    throw new Error("INVALID_PORTION_QUANTITY");
-  }
+export function portionToGrams(
+  quantity: number,
+  gramsPerUnit: number
+): number {
+  validateNonNegative(quantity, "INVALID_PORTION_QUANTITY", 100);
+  validateNonNegative(gramsPerUnit, "INVALID_GRAMS_PER_UNIT", 5000);
+  if (gramsPerUnit === 0) throw new Error("PORTION_REFERENCE_GRAMS_REQUIRED");
+  return quantity * gramsPerUnit;
+}
 
-  if (portion.unit === "gram") return portion.quantity;
+export function gramsToPortion(
+  edibleGrams: number,
+  gramsPerUnit: number
+): number {
+  validateNonNegative(edibleGrams, "INVALID_ACTUAL_EDIBLE_GRAMS", 5000);
+  validateNonNegative(gramsPerUnit, "INVALID_GRAMS_PER_UNIT", 5000);
+  if (gramsPerUnit === 0) throw new Error("PORTION_REFERENCE_GRAMS_REQUIRED");
+  return edibleGrams / gramsPerUnit;
+}
 
-  const referenceGrams = portion.reference_grams_per_unit;
-  if (typeof referenceGrams !== "number" ||
-      !Number.isFinite(referenceGrams) ||
-      referenceGrams <= 0 ||
-      referenceGrams > 5000) {
-    throw new Error("PORTION_REFERENCE_GRAMS_REQUIRED");
-  }
+/** User edits household portion quantity; grams are recalculated. */
+export function updatePortionQuantity(
+  current: LinkedPortion,
+  quantity: number
+): LinkedPortion {
+  const edible_grams = portionToGrams(quantity, current.grams_per_unit);
+  return { ...current, quantity, edible_grams };
+}
 
-  return portion.quantity * referenceGrams;
+/** Dietitian edits grams; household portion quantity is recalculated. */
+export function updateEdibleGrams(
+  current: LinkedPortion,
+  edibleGrams: number
+): LinkedPortion {
+  const quantity = gramsToPortion(edibleGrams, current.grams_per_unit);
+  return { ...current, quantity, edible_grams: edibleGrams };
 }
 
 /**
- * Nutrient composition is stored per 100 g edible portion.
- * User-facing quantities can be servings, shares, bowls, pieces, etc.
- * Missing source values remain null, never zero.
+ * Create a linked portion from a chosen serving reference.
+ * The serving reference may be database-provided, measured or dietitian-defined.
+ */
+export function createLinkedPortion(input: {
+  quantity: number;
+  unit: PortionSelection["unit"];
+  grams_per_unit: number;
+  basis: PortionSelection["basis"];
+}): LinkedPortion {
+  return {
+    ...input,
+    edible_grams: portionToGrams(input.quantity, input.grams_per_unit)
+  };
+}
+
+/**
+ * Nutrient composition remains on the source's per-100-g edible basis.
+ * Missing source values remain null; never silently convert them to zero.
  */
 export function calculateNutrients(
   values: NutrientValuesPer100g,
   edibleGrams: number
 ): CalculatedNutrient[] {
-  if (!Number.isFinite(edibleGrams) || edibleGrams < 0 || edibleGrams > 5000) {
-    throw new Error("INVALID_EDIBLE_GRAMS");
-  }
+  validateNonNegative(edibleGrams, "INVALID_EDIBLE_GRAMS", 5000);
 
   const codes = Object.keys(NUTRIENT_UNITS) as NutrientCode[];
   return codes.map((code) => {
@@ -64,12 +102,14 @@ export function calculateNutrients(
   });
 }
 
-export function calculatePortionNutrients(
+export function calculateLinkedPortionNutrients(
   values: NutrientValuesPer100g,
-  portion: PortionSelection
-): { edible_grams: number; nutrients: CalculatedNutrient[] } {
-  const edible_grams = resolvePortionGrams(portion);
-  return { edible_grams, nutrients: calculateNutrients(values, edible_grams) };
+  portion: LinkedPortion
+): { portion: LinkedPortion; nutrients: CalculatedNutrient[] } {
+  return {
+    portion,
+    nutrients: calculateNutrients(values, portion.edible_grams)
+  };
 }
 
 export function sumMealNutrients(
