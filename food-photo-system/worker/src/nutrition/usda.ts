@@ -23,6 +23,7 @@ type FdcNutrient = {
   nutrientName?: string;
   unitName?: string;
   amount?: number;
+  value?: number;
 };
 
 type FdcFood = {
@@ -68,8 +69,9 @@ function normalizeNutrients(items: FdcNutrient[] = []): NutrientValuesPer100g {
   for (const item of items) {
     const number = nutrientNumber(item);
     const code = number ? FDC_NUTRIENT_NUMBERS[number] : undefined;
-    if (!code || typeof item.amount !== "number") continue;
-    const value = toTargetUnit(code, item.amount, nutrientUnit(item));
+    const amount = item.amount ?? item.value;
+    if (!code || typeof amount !== "number") continue;
+    const value = toTargetUnit(code, amount, nutrientUnit(item));
     if (value !== null) result[code] = value;
   }
   return result;
