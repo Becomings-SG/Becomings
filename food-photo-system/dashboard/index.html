@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Becomings | Dietitian Meal Review</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#202b27;background:#f4f6f3;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}.top{background:#fff;border-bottom:1px solid #e1e7e1;padding:18px 28px;display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-weight:750;letter-spacing:.02em}.brand small{display:block;font-size:11px;color:#6b7971;font-weight:500;letter-spacing:.12em;margin-top:3px}.pill{border-radius:99px;padding:6px 10px;background:#fff2d8;color:#795616;font-size:12px;font-weight:650}.wrap{max-width:1200px;margin:28px auto;padding:0 20px}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}.head h1{font-size:25px;margin:0 0 6px}.muted{color:#6d7972;font-size:13px}.layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);gap:18px}.card{background:white;border:1px solid #e2e8e2;border-radius:14px;padding:18px;box-shadow:0 2px 8px #1b35200a}.card h2{font-size:16px;margin:0 0 14px}.photo{height:230px;border-radius:10px;background:linear-gradient(135deg,#e9e3d6,#d7e1d4);display:grid;place-items:center;color:#536457;text-align:center;padding:20px}.photo strong{display:block;font-size:18px;margin-bottom:6px}.items{display:flex;flex-direction:column;gap:12px}.item{border:1px solid #e3e9e3;border-radius:12px;padding:14px}.itemhead{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.itemhead strong{font-size:14px}.tag{font-size:11px;color:#55745f;background:#edf5ee;border-radius:99px;padding:5px 8px}.fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.field label{display:block;font-size:11px;color:#68766e;margin-bottom:5px}.field input,.field select,.notes{width:100%;border:1px solid #d7dfd8;border-radius:8px;padding:9px 10px;font:inherit;font-size:14px;color:#24332a;background:white}.unit{display:flex;gap:5px}.unit input{min-width:0}.unit span{align-self:center;color:#718077;font-size:12px}.reference{display:flex;justify-content:space-between;gap:12px;background:#f6f8f5;padding:9px 10px;border-radius:8px;margin-top:10px;font-size:12px;color:#617067}.source{margin-top:13px;border-top:1px solid #edf0ed;padding-top:12px}.source summary{cursor:pointer;font-size:12px;font-weight:650;color:#395a44}.sourcegrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:12px}.sourcegrid div{background:#f7f9f6;border-radius:7px;padding:8px}.sourcegrid b{display:block;color:#6a776f;font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}.source-desc{font-size:12px;line-height:1.5;color:#46564b;margin-top:9px}.nutrients{width:100%;border-collapse:collapse;font-size:12px}.nutrients th,.nutrients td{text-align:right;padding:8px 5px;border-bottom:1px solid #edf0ed}.nutrients th:first-child,.nutrients td:first-child{text-align:left}.nutrients th{color:#69766e;font-weight:600}.nutrients td{font-variant-numeric:tabular-nums}.total{font-weight:750;background:#f7f9f6}.buttons{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}.btn{border:1px solid #ccd8ce;background:#fff;color:#294333;border-radius:9px;padding:10px 14px;font:inherit;font-size:13px;font-weight:650;cursor:pointer}.btn.primary{background:#315d40;color:white;border-color:#315d40}.btn:disabled{opacity:.5;cursor:not-allowed}.notice{background:#fff7e7;border:1px solid #f1dfb9;border-radius:9px;padding:10px 12px;font-size:12px;color:#765c27;margin-top:14px}.status{font-size:12px;color:#5b6d60;margin-top:9px;min-height:18px}.add{margin-top:12px}.foot{margin:18px 0 40px;text-align:center;color:#839087;font-size:11px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.fields{grid-template-columns:1fr 1fr}.head{flex-direction:column}.top{padding:15px 18px}}
+@media(max-width:480px){.fields{grid-template-columns:1fr 1fr}.sourcegrid{grid-template-columns:1fr}.wrap{padding:0 12px}.card{padding:14px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand">BECOMINGS<small>PERSONALISED NUTRITION &amp; LIFESTYLE CARE</small></div><span class="pill">Prototype · synthetic data only</span></header>
+<main class="wrap">
+  <div class="head"><div><h1>Meal review</h1><div class="muted">Demo client BC-DEMO-001 · 20 Nov 2026 · Lunch · Submitted via WhatsApp</div></div><div class="muted">Review status: <strong id="reviewState">Pending dietitian review</strong></div></div>
+  <div class="layout">
+    <section class="card">
+      <h2>Submitted meal photo</h2>
+      <div class="photo"><div><strong>Chicken rice · demo image placeholder</strong><span class="muted">The live dashboard will display the original private Drive image here.</span></div></div>
+      <div class="notice">This prototype uses invented sample values to demonstrate the review workflow. No SG FoodID, MyFCD or USDA record values are represented here.</div>
+      <h2 style="margin-top:20px">Food items and portions</h2>
+      <div class="items" id="items"></div>
+      <button class="btn add" id="addItem">+ Add food component</button>
+    </section>
+    <aside>
+      <section class="card">
+        <h2>Meal nutrient totals</h2>
+        <div class="muted" style="margin-bottom:10px">Recalculates when portion or gram weight changes. Values below are illustrative only.</div>
+        <table class="nutrients"><thead><tr><th>Nutrient</th><th>Amount</th><th>Unit</th></tr></thead><tbody id="totals"></tbody></table>
+        <div class="status" id="calcStatus" aria-live="polite">Demo calculations ready.</div>
+      </section>
+      <section class="card" style="margin-top:18px">
+        <h2>Dietitian review</h2>
+        <label class="field"><span style="display:block;font-size:11px;color:#68766e;margin-bottom:5px">Review notes</span><textarea class="notes" id="notes" rows="4" placeholder="Record food-match corrections, uncertainty or review notes..."></textarea></label>
+        <div class="notice">Approval controls are demonstrative only. The production version will save the review to the secured database and retain an audit history.</div>
+        <div class="buttons"><button class="btn" id="reject">Reject</button><button class="btn primary" id="approve">Approve meal</button></div>
+        <div class="status" id="approvalStatus" aria-live="polite"></div>
+      </section>
+    </aside>
+  </div>
+  <div class="foot">Becomings Food Photo System · Internal prototype · Not for clinical use</div>
+</main>
+<script>
+const nutrients=["Energy","Carbohydrate","Protein","Total fat","Fibre","Saturated fat","Total sugars","Sodium","Potassium","Phosphorus"];
+const units=["kcal","g","g","g","g","g","g","mg","mg","mg"];
+const demoFoods=[
+ {id:"rice",name:"Chicken rice – cooked rice only",source:"SG FoodID (preferred source placeholder)",record:"DEMO-SG-RICE-001",description:"Placeholder description: cooked chicken rice, rice component only. Replace with the exact original description from the selected SG FoodID record.",serving:"1 share",ref:200,qty:.75,grams:150,basis:"Dietitian-defined demo reference",per100:[170,37,3.2,0.4,0.5,0.1,0.1,220,35,45]},
+ {id:"chicken",name:"Chicken rice – chicken component",source:"SG FoodID (preferred source placeholder)",record:"DEMO-SG-CHICKEN-001",description:"Placeholder description: cooked chicken component served with chicken rice. Confirm cut, skin status and cooking method against the actual source record.",serving:"1 share",ref:120,qty:1,grams:120,basis:"Dietitian-defined demo reference",per100:[220,0,26,13,0,3.6,0,430,250,190]},
+ {id:"sauce",name:"Dark sauce",source:"Dietitian custom entry (demo)",record:"DEMO-CUSTOM-SAUCE",description:"Illustrative sauce entry only. Use actual source data or a recipe calculation before clinical use.",serving:"1 teaspoon",ref:5,qty:1,grams:5,basis:"Dietitian-defined demo reference",per100:[80,18,1,0,0,0,15,1500,30,20]}
+];
+let foods=demoFoods.map(x=>({...x}));
+function fmt(v){return Number(v).toFixed(1)}
+function calc(food){return food.per100.map(v=>v===null?null:v*food.grams/100)}
+function render(){
+ const root=document.getElementById("items");root.innerHTML="";
+ foods.forEach((f,index)=>{
+  const el=document.createElement("article");el.className="item";
+  el.innerHTML=`
+   <div class="itemhead"><strong>${escapeHtml(f.name)}</strong><span class="tag">Editable · ${escapeHtml(f.source.split(" ")[0])}</span></div>
+   <div class="fields">
+    <div class="field"><label for="qty-${f.id}">Portion quantity</label><input id="qty-${f.id}" type="number" min="0" max="100" step="0.05" value="${f.qty}"></div>
+    <div class="field"><label for="grams-${f.id}">Edible weight</label><div class="unit"><input id="grams-${f.id}" type="number" min="0" max="5000" step="1" value="${f.grams}"><span>g</span></div></div>
+    <div class="field"><label for="ref-${f.id}">1 ${escapeHtml(f.serving)} =</label><div class="unit"><input id="ref-${f.id}" type="number" min="1" max="5000" step="1" value="${f.ref}"><span>g</span></div></div>
+   </div>
+   <div class="reference"><span>Serving reference: ${escapeHtml(f.serving)}</span><span>${escapeHtml(f.basis)}</span></div>
+   <details class="source"><summary>Inspect original food record and nutrient composition</summary>
+    <div class="sourcegrid">
+     <div><b>Database/source</b>${escapeHtml(f.source)}</div><div><b>Record ID</b>${escapeHtml(f.record)}</div>
+     <div><b>Food description</b>${escapeHtml(f.description)}</div><div><b>Serving description</b>${escapeHtml(f.serving)} · ${f.ref} g reference</div>
+    </div>
+    <p class="source-desc"><strong>Source nutrient composition per 100 g (demo only)</strong></p>
+    <table class="nutrients"><tbody>${nutrients.map((n,i)=>`<tr><td>${n}</td><td>${f.per100[i]===null?"Not reported":fmt(f.per100[i])}</td><td>${units[i]}</td></tr>`).join("")}</tbody></table>
+   </details>
+   <div class="buttons"><button class="btn remove" data-id="${f.id}">Remove item</button></div>`;
+  root.appendChild(el);
+  const q=el.querySelector("#qty-"+f.id),g=el.querySelector("#grams-"+f.id),r=el.querySelector("#ref-"+f.id);
+  q.addEventListener("input",()=>{const n=Number(q.value);if(valid(n,0,100)){f.qty=n;f.grams=n*f.ref;g.value=fmt(f.grams);updateTotals();}});
+  g.addEventListener("input",()=>{const n=Number(g.value);if(valid(n,0,5000)&&f.ref>0){f.grams=n;f.qty=n/f.ref;q.value=Number(f.qty.toFixed(4));updateTotals();}});
+  r.addEventListener("input",()=>{const n=Number(r.value);if(valid(n,1,5000)){f.ref=n;f.grams=f.qty*n;g.value=fmt(f.grams);updateTotals();}});
+  el.querySelector(".remove").addEventListener("click",()=>{foods=foods.filter(x=>x.id!==f.id);render();});
+ });
+ updateTotals();
+}
+function valid(n,min,max){return Number.isFinite(n)&&n>=min&&n<=max}
+function updateTotals(){
+ const sums=nutrients.map((_,i)=>foods.reduce((sum,f)=>sum+(calc(f)[i]??0),0));
+ document.getElementById("totals").innerHTML=nutrients.map((n,i)=>`<tr><td>${n}</td><td>${fmt(sums[i])}</td><td>${units[i]}</td></tr>`).join("");
+ document.getElementById("calcStatus").textContent="Recalculated using current gram weights. Missing values in a live source will remain unavailable, not zero.";
+}
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+document.getElementById("addItem").addEventListener("click",()=>{
+ const id="custom-"+Date.now();foods.push({id,name:"New food component",source:"Unmatched – select a source in production",record:"Not selected",description:"No source description yet. Select and confirm a food composition record.",serving:"1 serving",ref:100,qty:1,grams:100,basis:"Temporary demo reference",per100:Array(10).fill(null)});render();
+});
+document.getElementById("approve").addEventListener("click",()=>{document.getElementById("approvalStatus").textContent="Demo only: approval is not saved or transmitted.";document.getElementById("reviewState").textContent="Demo approval selected";});
+document.getElementById("reject").addEventListener("click",()=>{document.getElementById("approvalStatus").textContent="Demo only: rejection is not saved.";document.getElementById("reviewState").textContent="Demo rejection selected";});
+render();
+</script>
+</body>
+</html>
