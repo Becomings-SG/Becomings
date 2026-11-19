@@ -1,17 +1,5 @@
 PRAGMA foreign_keys = ON;
 
-CREATE TABLE IF NOT EXISTS meal_photo_analyses (
-  analysis_id TEXT PRIMARY KEY,
-  submission_id TEXT NOT NULL UNIQUE,
-  model_name TEXT NOT NULL,
-  analysis_json TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending_review' CHECK (
-    status IN ('pending_review', 'reviewed', 'failed')
-  ),
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  FOREIGN KEY (submission_id) REFERENCES food_photo_submissions(submission_id)
-);
-
 CREATE TABLE IF NOT EXISTS meal_items (
   meal_item_id TEXT PRIMARY KEY,
   submission_id TEXT NOT NULL,
