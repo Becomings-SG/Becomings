@@ -6,6 +6,20 @@ CREATE TABLE IF NOT EXISTS meal_items (
   vision_food_name TEXT NOT NULL,
   vision_description TEXT,
   estimated_edible_grams REAL,
+  portion_quantity REAL,
+  portion_unit TEXT CHECK (
+    portion_unit IS NULL OR portion_unit IN (
+      'serving', 'share', 'bowl', 'cup', 'piece', 'slice',
+      'tablespoon', 'teaspoon', 'gram', 'custom'
+    )
+  ),
+  portion_reference_label TEXT,
+  reference_grams_per_unit REAL,
+  portion_basis TEXT CHECK (
+    portion_basis IS NULL OR portion_basis IN (
+      'database', 'dietitian_defined', 'measured', 'estimated'
+    )
+  ),
   portion_confidence TEXT NOT NULL CHECK (
     portion_confidence IN ('low', 'medium', 'high')
   ),
@@ -13,6 +27,7 @@ CREATE TABLE IF NOT EXISTS meal_items (
   selected_source TEXT,
   selected_source_food_id TEXT,
   selected_food_name TEXT,
+  original_food_description TEXT,
   match_status TEXT NOT NULL DEFAULT 'unmatched' CHECK (
     match_status IN ('unmatched', 'candidate_found', 'dietitian_selected', 'custom_food')
   ),
@@ -28,7 +43,9 @@ CREATE TABLE IF NOT EXISTS food_database_cache (
   source TEXT NOT NULL CHECK (source IN ('USDA_FDC', 'SG_FOODID', 'MYFCD', 'CUSTOM')),
   source_food_id TEXT NOT NULL,
   food_name TEXT NOT NULL,
+  original_description TEXT,
   data_type TEXT,
+  serving_references_json TEXT NOT NULL DEFAULT '[]',
   nutrients_per_100g_json TEXT NOT NULL,
   licence_label TEXT NOT NULL,
   source_url TEXT,
@@ -45,6 +62,9 @@ CREATE TABLE IF NOT EXISTS meal_item_nutrient_results (
   unit TEXT NOT NULL,
   source TEXT NOT NULL,
   source_food_id TEXT NOT NULL,
+  portion_quantity REAL,
+  portion_unit TEXT,
+  reference_grams_per_unit REAL,
   calculation_basis_grams REAL NOT NULL,
   calculated_at TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (meal_item_id, nutrient_code),
