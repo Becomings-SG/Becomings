@@ -4,68 +4,68 @@ Reviewed: 20 November 2026
 
 This is an implementation decision record, not legal advice.
 
-## 1. USDA FoodData Central — enabled
+## 1. Database priority
+
+1. SG FoodID for Singapore hawker foods and local dishes.
+2. MyFCD for Malaysian local dishes and ingredients.
+3. USDA FoodData Central for generic ingredients and fallback records.
+4. Exact packaged-food nutrition label when supplied.
+5. Dietitian-created recipe calculation for homemade mixed dishes.
+
+Do not silently substitute a generic US food for a local mixed dish. Show candidate matches and original descriptions to the dietitian.
+
+## 2. Serving-size and food-description preservation
+
+- Preserve the original source food name and full description verbatim.
+- Preserve the source's serving descriptions, household measures, edible-portion notes and gram equivalents where the source supplies them.
+- Do not invent a serving size when the database does not provide one.
+- Where the source provides only nutrient values per 100 g, allow a dietitian-defined serving reference (e.g. one share of rice) and record who defined it, its gram equivalent, date and rationale.
+- Display the human serving quantity (e.g. 0.75 share, 1 bowl, 2 pieces) alongside the gram equivalent used in the calculation.
+- Allow the dietitian to override the gram weight directly. Retain the originally selected serving and the final grams as an audit trail.
+- Mixed dishes should be split into components when clinically useful (e.g. rice, chicken, sauce, soup); do not apply the whole-dish nutrient profile to a rice-only portion.
+
+## 3. Singapore Food Insights Database (SG FoodID) — primary Singapore source
+
+- Official HPB landing page: https://www.hpb.gov.sg/healthy-living/food-and-beverage/sgfoodid/
+- Use as the first candidate source for Singapore foods, preserving original descriptions, source IDs, nutrient units, serving details and source links where available.
+- Before automated bulk import, confirm applicable terms for commercial integration, caching, derivative calculations and redistribution. Public search/download access should not be treated as blanket permission to republish the dataset.
+
+## 4. Malaysian Food Composition Database (MyFCD) — primary Malaysian source
+
+- Official database: https://myfcd.moh.gov.my/
+- Use as the first candidate source for Malaysian foods, preserving source descriptions, record IDs, serving details and nutrient units.
+- Confirm applicable terms for automated access, bulk import, commercial use, caching and client-facing display before copying records into Becomings.
+
+## 5. USDA FoodData Central — programmatic fallback
 
 - Official API guide: https://fdc.nal.usda.gov/api-guide/
-- Data licence: CC0 1.0 Universal; USDA states the data are public domain and no permission is required.
-- API key is required for requests; protect it in Cloudflare Worker secrets.
-- Attribute the data to USDA FoodData Central in the application and analysis exports.
-- Search/detail API endpoints are documented.
-- Use Foundation Foods, SR Legacy and FNDDS where appropriate. Branded food records should be used only for the matching exact product.
+- Data licence: CC0 1.0 Universal; USDA describes the data as public domain.
+- Protect the API key in Cloudflare Worker secrets.
+- Attribute the source in the application and analysis exports.
 - Cache source ID, food description, data type, nutrient values, retrieval date and source URL.
 
 Suggested attribution:
 "U.S. Department of Agriculture, Agricultural Research Service. FoodData Central. https://fdc.nal.usda.gov/"
 
-## 2. Singapore Food Insights Database (SG FoodID) — preferred local source, import pending
+## 6. Clinical calculation rules
 
-- Official HPB landing page: https://www.hpb.gov.sg/healthy-living/food-and-beverage/sgfoodid/
-- HPB describes a food search tool that allows users to search, compare and download nutritional information.
-- The public landing page reviewed does not establish an open API, bulk-reuse licence or permission to reproduce the downloadable records in a third-party commercial application.
-- Do not scrape, bulk download into Becomings, redistribute or create a local derivative database until HPB confirms applicable terms in writing.
-- Until permission is confirmed, use the official tool as a manual reference for the dietitian. Record manually entered values only where the professional workflow and terms permit, with citation and provenance.
-
-Potential enquiry: HPB through its official contact/feedback channel. Ask specifically about commercial integration, bulk import, caching, redistribution to clients, derived nutrient calculations, attribution and update obligations.
-
-## 3. Malaysian Food Composition Database (MyFCD) — supplementary local source, permission pending
-
-- Official database: https://myfcd.moh.gov.my/
-- The site provides current and 1997 food composition modules and displays a copyright notice for the Malaysian Food Composition Database Programme.
-- The pages reviewed did not identify an explicit commercial reuse licence or public API grant.
-- Do not scrape, bulk import, cache or redistribute the records until written permission is received from the responsible Malaysian Ministry of Health / Institute for Medical Research authority.
-- Until then, use as a manual reference only where permitted, retaining the exact food identifier, nutrient basis, access date and citation.
-
-Potential enquiry: nutrition@moh.gov.my. Ask about commercial use, automated access, bulk copying, caching, derivative calculations, client-facing display and attribution.
-
-## 4. Data-source precedence
-
-1. Exact branded product label supplied by the client, if legible and current.
-2. Licensed SG FoodID match for Singapore local dishes, once reuse permission is confirmed.
-3. Licensed MyFCD match for Malaysian foods, once reuse permission is confirmed.
-4. USDA FoodData Central match for generic ingredients and suitable prepared-food entries.
-5. Dietitian-created recipe calculation using ingredient weights and traceable sources.
-
-Never silently substitute a US food entry for a local mixed dish. Present candidates for dietitian selection.
-
-## 5. Clinical calculation rules
-
-- Store nutrient values on a per-100-g edible-portion basis with source, food ID, data type and units.
-- Calculate intake as source value per 100 g × estimated edible grams ÷ 100.
-- Do not convert missing nutrients to zero.
-- Preserve separate values for carbohydrate, protein, total fat, fibre, saturated fat, total sugars, sodium, potassium and phosphorus, plus energy.
-- Use null/unavailable when the selected source does not report a nutrient.
-- Record portion uncertainty separately from database nutrient certainty.
+- Preserve original nutrient values and their stated basis. If the source is per 100 g edible portion, calculate: source value × edible grams ÷ 100.
+- If a serving is selected, resolve it to grams using a source-provided or dietitian-defined gram equivalent, then calculate from the nutrient basis.
+- Missing nutrient values remain null/unavailable, never zero.
+- Track portion uncertainty separately from food-match confidence and nutrient-source completeness.
 - The AI vision model identifies foods and estimates portions only. It must not generate nutrient values.
-- Every food match and gram estimate remains editable by the dietitian before approval.
+- Every food match and portion remains editable by the dietitian before approval.
 - No client-facing advice or automated diagnosis is generated by this module.
 
-## 6. Attribution and versioning
+## 7. Provenance and audit trail
 
-Every stored food match must retain:
-- Source name and source record ID.
-- Source dataset type or release where available.
-- Licence label and source URL.
-- Date accessed.
-- Nutrient basis and units.
+For every selected record and calculation, retain:
+- Source name, source record ID and original description.
+- Dataset release/version where available.
+- Licence label, source URL and date accessed.
+- Original nutrient basis and units.
+- Portion quantity, portion unit, serving description and grams per serving.
+- Whether the gram equivalent came from the source, measurement, dietitian definition or AI estimate.
+- Dietitian amendments and reason for change.
 
-Do not label the overall combined database as CC0. Each provider's records retain their own terms.
+Do not label the combined database as CC0. Each provider's records retain their own terms.
