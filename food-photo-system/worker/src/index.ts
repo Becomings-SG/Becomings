@@ -1,18 +1,9 @@
-export interface Env {
+import { processIncomingFoodPhotos, type Env as QueueEnv, type IncomingFoodPhoto } from "./queue";
+
+export interface Env extends QueueEnv {
   META_VERIFY_TOKEN: string;
   META_APP_SECRET: string;
   WA_ID_HASH_SECRET: string;
-  INGEST_QUEUE: Queue<IncomingFoodPhoto>;
-}
-
-export interface IncomingFoodPhoto {
-  sender_hash: string;
-  whatsapp_message_id: string;
-  whatsapp_timestamp: string;
-  media_id: string;
-  mime_type: string;
-  media_sha256?: string;
-  caption?: string;
 }
 
 type WhatsAppImage = {
@@ -87,8 +78,7 @@ async function verifyMetaSignature(
   const supplied = hexToBytes(signatureHeader.slice("sha256=".length));
   if (!supplied) return false;
 
-  const expectedHex = await hmacSha256(appSecret, rawBody);
-  const expected = hexToBytes(expectedHex);
+  const expected = hexToBytes(await hmacSha256(appSecret, rawBody));
   return expected !== null && constantTimeEqual(supplied, expected);
 }
 
@@ -102,9 +92,7 @@ function extractImageMessages(payload: WhatsAppWebhook): WhatsAppMessage[] {
           message.id &&
           message.from &&
           message.image?.id
-        ) {
-          messages.push(message);
-        }
+        ) messages.push(message);
       }
     }
   }
@@ -115,7 +103,6 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
-    // Meta webhook subscription verification.
     if (request.method === "GET" && url.pathname === "/webhooks/whatsapp") {
       const mode = url.searchParams.get("hub.mode");
       const token = url.searchParams.get("hub.verify_token");
@@ -157,14 +144,17 @@ export default {
           ...(image.sha256 ? { media_sha256: image.sha256 } : {}),
           ...(image.caption ? { caption: image.caption } : {}),
         };
-
         await env.INGEST_QUEUE.send(event);
       }
 
-      // Do not log raw payloads, phone numbers, names, captions or image data.
+      // Never log raw webhook bodies, phone numbers, names, captions or images.
       return Response.json({ received: true, queued_images: messages.length });
     }
 
     return new Response("Not found", { status: 404 });
+  },
+
+  async queue(batch: MessageBatch<IncomingFoodPhoto>, env: Env): Promise<void> {
+    await processIncomingFoodPhotos(batch, env);
   },
 };
