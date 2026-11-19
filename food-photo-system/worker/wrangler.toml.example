@@ -30,3 +30,6 @@ database_id = "REPLACE_WITH_D1_DATABASE_ID"
 # GOOGLE_OAUTH_CLIENT_ID
 # GOOGLE_OAUTH_CLIENT_SECRET
 # GOOGLE_OAUTH_REFRESH_TOKEN
+# OPENAI_API_KEY (only after nutrition analysis is wired into the queue)
+# USDA_FDC_API_KEY (USDA FoodData Central API key)
+# OPENAI_VISION_MODEL (optional; defaults in code)
