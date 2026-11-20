@@ -68,9 +68,10 @@ function render(){
    <div class="itemhead"><strong>${escapeHtml(f.name)}</strong><span class="tag">${escapeHtml(f.origin||"AI-detected")} · review required</span></div>
    <div class="field" style="margin-bottom:10px"><label for="name-${f.id}">Food / drink description</label><input id="name-${f.id}" type="text" value="${escapeHtml(f.name)}" style="width:100%;border:1px solid #d7dfd8;border-radius:8px;padding:9px 10px;font:inherit;font-size:14px"></div>
    <div class="fields">
-    <div class="field"><label for="qty-${f.id}">Portion quantity</label><input id="qty-${f.id}" type="number" min="0" max="100" step="0.05" value="${f.qty}"></div>
-    <div class="field"><label for="grams-${f.id}">Edible weight</label><div class="unit"><input id="grams-${f.id}" type="number" min="0" max="5000" step="1" value="${f.grams}"><span>g</span></div></div>
-    <div class="field"><label for="ref-${f.id}">Weight per ${escapeHtml(f.serving)} (if known)</label><div class="unit"><input id="ref-${f.id}" type="number" min="0" max="5000" step="1" value="${f.ref || ""}" placeholder="Enter g"><span>g</span></div></div>
+    <div class="field"><label for="qty-${f.id}">Portion quantity</label><input id="qty-${f.id}" type="number" min="0" max="100" step="0.05" value="${f.qty || ""}" placeholder="Enter quantity"></div>
+    <div class="field"><label for="unit-${f.id}">Portion unit</label><input id="unit-${f.id}" type="text" value="${escapeHtml(f.serving)}" placeholder="e.g. slice, tbsp"></div>
+    <div class="field"><label for="grams-${f.id}">Edible weight</label><div class="unit"><input id="grams-${f.id}" type="number" min="0" max="5000" step="1" value="${f.grams || ""}" placeholder="Enter g"><span>g</span></div></div>
+    <div class="field"><label for="ref-${f.id}">Weight per unit (if known)</label><div class="unit"><input id="ref-${f.id}" type="number" min="0" max="5000" step="1" value="${f.ref || ""}" placeholder="Enter g"><span>g</span></div></div>
    </div>
    <div class="reference"><span>Serving reference: ${escapeHtml(f.serving)}</span><span>${escapeHtml(f.basis)}</span></div>
    <details class="source"><summary>Inspect original food record and nutrient composition</summary>
@@ -85,6 +86,8 @@ function render(){
   root.appendChild(el);
   const nameInput=el.querySelector("#name-"+f.id);
   nameInput.addEventListener("input",()=>{f.name=nameInput.value;el.querySelector(".itemhead strong").textContent=f.name;});
+  const unitInput=el.querySelector("#unit-"+f.id);
+  unitInput.addEventListener("input",()=>{f.serving=unitInput.value||"unit";});
   const q=el.querySelector("#qty-"+f.id),g=el.querySelector("#grams-"+f.id),r=el.querySelector("#ref-"+f.id);
   q.addEventListener("input",()=>{const n=Number(q.value);if(valid(n,0,100)){f.qty=n;f.grams=n*f.ref;g.value=fmt(f.grams);updateTotals();}});
   g.addEventListener("input",()=>{const n=Number(g.value);if(valid(n,0,5000)&&f.ref>0){f.grams=n;f.qty=n/f.ref;q.value=Number(f.qty.toFixed(4));updateTotals();}});
