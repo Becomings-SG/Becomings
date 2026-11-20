@@ -17,9 +17,17 @@ This module is intentionally isolated from the existing static Becomings website
 4. Packaged foods should use the exact product label where available.
 5. Homemade mixed dishes should use dietitian-reviewed recipe calculations.
 
-The SG FoodID comparison-export importer is in `worker/src/nutrition/sgfoodid-csv.ts`. It preserves the official food name, source data type, last-updated year, default serving, separate per-100-g and per-serving nutrient sections, and the distinction between numeric values, Trace, dash/not-reported and blank. It does not scrape HPB or assume an undocumented API.
+The SG FoodID integration currently consists of:
 
-**Current limitation:** the importer is a parsing utility only. It has not yet been connected to D1, the dashboard text-search flow, or a complete HPB food catalogue. The three user-provided comparison exports are sample comparison files, not proof of a complete database download. Do not describe SG FoodID as live-connected until the import, search and nutrient retrieval path is implemented and tested. Use manually exported HPB records as the authoritative source for the current prototype; preserve their provenance and do not silently replace them with USDA values.
+- `worker/src/nutrition/sgfoodid-csv.ts`: parses HPB comparison-result CSV exports and preserves source nutrient statuses and serving details.
+- `worker/src/nutrition/sgfoodid-store.ts`: imports parsed records into D1 and searches imported records.
+- `database/migrations/0005_sgfoodid_food_records.sql`: creates the source-record cache.
+- `GET /api/foods/search?q=...`: searches only imported HPB records.
+- `POST /api/admin/import/sgfoodid`: imports a manually exported HPB CSV; requires the `SG_FOODID_IMPORT_TOKEN` secret as a Bearer token.
+
+The import route accepts CSV files up to 1 MB and at most 100 food columns per export. It stores the original parsed record, source type, update year, default serving, and both nutrient bases. Numeric values, Trace, dash/not-reported and blank remain distinct. Search prioritises exact/prefix matches and then Lab Analysis, Derived and Borrowed records; source type remains visible. No undocumented HPB API or scraping is used.
+
+**Current limitation:** the D1 importer and search endpoints have been added to the code, but are not yet deployed or runtime-tested, and the dashboard text-entry flow is not yet wired to them. The three user-provided comparison exports are sample records, not the complete HPB catalogue. Do not describe the database as fully populated or live-connected until the migration is applied, CSVs are imported, and searches are verified. Do not silently replace an unavailable HPB match with USDA values.
 
 ## Architecture
 
@@ -88,6 +96,7 @@ Apply:
 - `database/migrations/0002_add_client_drive_folder.sql`
 - `database/migrations/0003_add_nutrition_engine.sql`
 - `database/migrations/0004_portion_audit.sql`
+- `database/migrations/0005_sgfoodid_food_records.sql`
 
 The existing client onboarding process must create a client row and a current `granted` consent record before a sender's photos can be processed. Raw phone numbers are not stored in this database; the sender hash must be generated using the same HMAC secret as the webhook.
 
@@ -102,6 +111,7 @@ The existing client onboarding process must create a client row and a current `g
 - `GOOGLE_OAUTH_CLIENT_ID`
 - `GOOGLE_OAUTH_CLIENT_SECRET`
 - `GOOGLE_OAUTH_REFRESH_TOKEN`
+- `SG_FOODID_IMPORT_TOKEN` (a long random secret used only for authenticated HPB CSV imports)
 
 Use Cloudflare Worker secrets, not source files or GitHub commits.
 
@@ -124,3 +134,15 @@ Use Cloudflare Worker secrets, not source files or GitHub commits.
 6. Verify Meta Coexistence eligibility and complete supervised test onboarding.
 7. Add OpenAI meal analysis with a strict output schema and uncertainty fields.
 8. Build the private dietitian dashboard with manual approval.
+
+
+## Importing HPB SG FoodID comparison exports
+
+1. Export the required food records from the official SG FoodID food-search tool using its comparison/export function. Keep the downloaded CSV unchanged.
+2. Apply migration `0005_sgfoodid_food_records.sql` to the development D1 database.
+3. Set a strong `SG_FOODID_IMPORT_TOKEN` Worker secret. Do not put the token in GitHub or dashboard source.
+4. After deploying the Worker to a private development environment, POST the CSV file to `/api/admin/import/sgfoodid` with `Authorization: Bearer <token>` and `Content-Type: text/csv`.
+5. Verify the returned imported record count, then search with `GET /api/foods/search?q=chicken%20rice`.
+6. Confirm the returned food name, source type, update year, default serving, per-100-g values and per-serving values against the original HPB export.
+
+Do not import client information in these files. Import only HPB food-composition exports. The import route is not yet deployed; these steps become usable after development deployment and secret setup.
