@@ -1,10 +1,10 @@
 import { processIncomingFoodPhotos, type Env as QueueEnv, type IncomingFoodPhoto } from "./queue";
+import { importSgFoodIdCsv, searchSgFoodId } from "./nutrition/sgfoodid-store";
 
 export interface Env extends QueueEnv {
   META_VERIFY_TOKEN: string;
   META_APP_SECRET: string;
-  WA_ID_HASH_SECRET: string;
-}
+  WA_ID_HASH_SECRET: string;\n  SG_FOODID_IMPORT_TOKEN: string;\n}
 
 type WhatsAppImage = {
   id?: string;
@@ -102,6 +102,35 @@ function extractImageMessages(payload: WhatsAppWebhook): WhatsAppMessage[] {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
+    if (request.method === "GET" && url.pathname === "/api/foods/search") {
+      const query = url.searchParams.get("q") ?? "";
+      if (query.trim().length < 2) {
+        return Response.json({ source: "HPB SG FoodID", matches: [], message: "Enter at least 2 characters." });
+      }
+      const matches = await searchSgFoodId(query, env);
+      return Response.json({ source: "HPB SG FoodID", matches });
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/admin/import/sgfoodid") {
+      const supplied = request.headers.get("authorization") ?? "";
+      if (!env.SG_FOODID_IMPORT_TOKEN || supplied !== `Bearer ${env.SG_FOODID_IMPORT_TOKEN}`) {
+        return new Response("Unauthorized", { status: 401 });
+      }
+      const declaredLength = Number(request.headers.get("content-length") ?? "0");
+      if (declaredLength > 1_000_000) return new Response("CSV too large", { status: 413 });
+      const csv = await request.text();
+      if (new TextEncoder().encode(csv).byteLength > 1_000_000) {
+        return new Response("CSV too large", { status: 413 });
+      }
+      try {
+        const result = await importSgFoodIdCsv(csv, env);
+        return Response.json({ source: "HPB SG FoodID", ...result });
+      } catch (error) {
+        const code = error instanceof Error ? error.message : "IMPORT_FAILED";
+        return Response.json({ error: code }, { status: 400 });
+      }
+    }
 
     if (request.method === "GET" && url.pathname === "/webhooks/whatsapp") {
       const mode = url.searchParams.get("hub.mode");
