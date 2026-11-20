@@ -106,7 +106,7 @@ document.getElementById("addItem").addEventListener("click",()=>{
 document.getElementById("addTextMeal").addEventListener("click",()=>{
  const box=document.getElementById("textMeal"),raw=box.value.trim();
  if(!raw){document.getElementById("calcStatus").textContent="Enter the client's meal description first.";return;}
- const parts=raw.split(/,|\\band\\b|\\bwith\\b/i).map(x=>x.trim()).filter(Boolean);
+ const parts=raw.split(/,|\s+and\s+/i).map(x=>x.trim()).filter(Boolean);
  parts.forEach((part,i)=>{
   const id="text-"+Date.now()+"-"+i;
   foods.push({id,name:part,origin:"Client-reported text",source:"Client-reported text – food database match required",record:"Not selected",description:"Original client text: "+part,serving:"1 serving",ref:100,qty:0,grams:0,basis:"Portion not yet confirmed",per100:Array(10).fill(null)});
