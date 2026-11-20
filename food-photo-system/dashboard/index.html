@@ -21,8 +21,15 @@
       <div class="photo"><div><strong>Chicken rice · demo image placeholder</strong><span class="muted">The live dashboard will display the original private Drive image here.</span></div></div>
       <div class="notice">This prototype uses invented sample values to demonstrate the review workflow. No SG FoodID, MyFCD or USDA record values are represented here.</div>
       <h2 style="margin-top:20px">Food items and portions</h2>
+      <div class="notice" style="margin-top:0;margin-bottom:12px">You can add foods missed by photo recognition, or create a meal from the client's written description. New items remain unconfirmed until you select a food record and verify the portion.</div>
+      <div class="card" style="padding:13px;margin-bottom:12px;background:#f8faf7;box-shadow:none">
+        <strong style="font-size:13px">Create meal from client text</strong>
+        <p class="muted" style="margin:6px 0 9px">Paste the client's meal description. Separate food items with commas or “and”. This prototype splits the text only; it does not yet use AI to interpret quantities or food details.</p>
+        <textarea class="notes" id="textMeal" rows="3" placeholder="e.g. 2 slices wholemeal bread, 1 boiled egg and kopi with milk"></textarea>
+        <div class="buttons"><button class="btn" id="addTextMeal">Add text-described foods</button></div>
+      </div>
       <div class="items" id="items"></div>
-      <button class="btn add" id="addItem">+ Add food component</button>
+      <button class="btn add" id="addItem">+ Add food component manually</button>
     </section>
     <aside>
       <section class="card">
@@ -58,7 +65,8 @@ function render(){
  foods.forEach((f,index)=>{
   const el=document.createElement("article");el.className="item";
   el.innerHTML=`
-   <div class="itemhead"><strong>${escapeHtml(f.name)}</strong><span class="tag">Editable · ${escapeHtml(f.source.split(" ")[0])}</span></div>
+   <div class="itemhead"><strong>${escapeHtml(f.name)}</strong><span class="tag">${escapeHtml(f.origin||"AI-detected")} · review required</span></div>
+   <div class="field" style="margin-bottom:10px"><label for="name-${f.id}">Food / drink description</label><input id="name-${f.id}" type="text" value="${escapeHtml(f.name)}" style="width:100%;border:1px solid #d7dfd8;border-radius:8px;padding:9px 10px;font:inherit;font-size:14px"></div>
    <div class="fields">
     <div class="field"><label for="qty-${f.id}">Portion quantity</label><input id="qty-${f.id}" type="number" min="0" max="100" step="0.05" value="${f.qty}"></div>
     <div class="field"><label for="grams-${f.id}">Edible weight</label><div class="unit"><input id="grams-${f.id}" type="number" min="0" max="5000" step="1" value="${f.grams}"><span>g</span></div></div>
@@ -75,6 +83,8 @@ function render(){
    </details>
    <div class="buttons"><button class="btn remove" data-id="${f.id}">Remove item</button></div>`;
   root.appendChild(el);
+  const nameInput=el.querySelector("#name-"+f.id);
+  nameInput.addEventListener("input",()=>{f.name=nameInput.value;el.querySelector(".itemhead strong").textContent=f.name;});
   const q=el.querySelector("#qty-"+f.id),g=el.querySelector("#grams-"+f.id),r=el.querySelector("#ref-"+f.id);
   q.addEventListener("input",()=>{const n=Number(q.value);if(valid(n,0,100)){f.qty=n;f.grams=n*f.ref;g.value=fmt(f.grams);updateTotals();}});
   g.addEventListener("input",()=>{const n=Number(g.value);if(valid(n,0,5000)&&f.ref>0){f.grams=n;f.qty=n/f.ref;q.value=Number(f.qty.toFixed(4));updateTotals();}});
@@ -91,7 +101,18 @@ function updateTotals(){
 }
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 document.getElementById("addItem").addEventListener("click",()=>{
- const id="custom-"+Date.now();foods.push({id,name:"New food component",source:"Unmatched – select a source in production",record:"Not selected",description:"No source description yet. Select and confirm a food composition record.",serving:"1 serving",ref:100,qty:1,grams:100,basis:"Temporary demo reference",per100:Array(10).fill(null)});render();
+ const id="custom-"+Date.now();foods.push({id,name:"New food component – rename this item",origin:"Dietitian-added",source:"Unmatched – select a source in production",record:"Not selected",description:"No source description yet. Select and confirm a food composition record.",serving:"1 serving",ref:100,qty:0,grams:0,basis:"Portion not yet confirmed",per100:Array(10).fill(null)});render();
+});
+document.getElementById("addTextMeal").addEventListener("click",()=>{
+ const box=document.getElementById("textMeal"),raw=box.value.trim();
+ if(!raw){document.getElementById("calcStatus").textContent="Enter the client's meal description first.";return;}
+ const parts=raw.split(/,|\\band\\b|\\bwith\\b/i).map(x=>x.trim()).filter(Boolean);
+ parts.forEach((part,i)=>{
+  const id="text-"+Date.now()+"-"+i;
+  foods.push({id,name:part,origin:"Client-reported text",source:"Client-reported text – food database match required",record:"Not selected",description:"Original client text: "+part,serving:"1 serving",ref:100,qty:0,grams:0,basis:"Portion not yet confirmed",per100:Array(10).fill(null)});
+ });
+ box.value="";render();
+ document.getElementById("calcStatus").textContent="Text items added. Confirm food identity, preparation, portion and database record for each item before approval.";
 });
 document.getElementById("approve").addEventListener("click",()=>{document.getElementById("approvalStatus").textContent="Demo only: approval is not saved or transmitted.";document.getElementById("reviewState").textContent="Demo approval selected";});
 document.getElementById("reject").addEventListener("click",()=>{document.getElementById("approvalStatus").textContent="Demo only: rejection is not saved.";document.getElementById("reviewState").textContent="Demo rejection selected";});
