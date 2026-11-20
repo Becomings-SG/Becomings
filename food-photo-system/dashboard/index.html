@@ -109,7 +109,7 @@ document.getElementById("addTextMeal").addEventListener("click",()=>{
  const parts=raw.split(/,|\s+and\s+/i).map(x=>x.trim()).filter(Boolean);
  parts.forEach((part,i)=>{
   const id="text-"+Date.now()+"-"+i;
-  const match=part.match(/^(\\d+(?:\\.\\d+)?)\\s+(slices?|pieces?|pcs?|bowls?|cups?|tablespoons?|tbsp|teaspoons?|tsp|shares?|servings?)\\s+(.+)$/i);
+  const match=part.match(/^(\d+(?:\.\d+)?)\s+(slices?|pieces?|pcs?|bowls?|cups?|tablespoons?|tbsp|teaspoons?|tsp|shares?|servings?)\s+(.+)$/i);
   const qty=match?Number(match[1]):0;
   const unit=match?match[2].toLowerCase():"serving";
   const foodName=match?match[3].trim():part;
