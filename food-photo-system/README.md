@@ -9,6 +9,18 @@ This module is intentionally isolated from the existing static Becomings website
 - Immediate per-meal AI analysis plus end-of-day summaries.
 - Manual dietitian review before findings or recommendations are shared with clients.
 
+## Singapore food composition source priority
+
+1. **HPB Singapore Food Insights Database (SG FoodID)** is the primary source for Singapore foods and local mixed dishes.
+2. MyFCD is the secondary source for Malaysian foods.
+3. USDA FoodData Central is a fallback for generic foods not adequately represented in the local sources.
+4. Packaged foods should use the exact product label where available.
+5. Homemade mixed dishes should use dietitian-reviewed recipe calculations.
+
+The SG FoodID comparison-export importer is in `worker/src/nutrition/sgfoodid-csv.ts`. It preserves the official food name, source data type, last-updated year, default serving, separate per-100-g and per-serving nutrient sections, and the distinction between numeric values, Trace, dash/not-reported and blank. It does not scrape HPB or assume an undocumented API.
+
+**Current limitation:** the importer is a parsing utility only. It has not yet been connected to D1, the dashboard text-search flow, or a complete HPB food catalogue. The three user-provided comparison exports are sample comparison files, not proof of a complete database download. Do not describe SG FoodID as live-connected until the import, search and nutrient retrieval path is implemented and tested. Use manually exported HPB records as the authoritative source for the current prototype; preserve their provenance and do not silently replace them with USDA values.
+
 ## Architecture
 
 1. Meta WhatsApp Cloud API sends signed webhooks to a Cloudflare Worker.
@@ -46,6 +58,7 @@ This remains a development scaffold. It has not been deployed or integration-tes
 - USDA FoodData Central search/detail adapter.
 - Food-source licensing and provenance policy for SG FoodID, MyFCD and USDA.
 - D1 tables for food items, source cache, item nutrient results and meal totals.
+- SG FoodID comparison CSV parser added; D1 import and dashboard lookup remain to be implemented.
 
 ### Task 4: dietitian dashboard interaction prototype
 
@@ -72,7 +85,9 @@ Do not register, migrate, disconnect or otherwise change the live number until M
 
 Apply:
 - `database/schema.sql`
-- `database/migrations/0002_add_client_drive_folder.sql`\n- `database/migrations/0003_add_nutrition_engine.sql`\n- `database/migrations/0004_portion_audit.sql`
+- `database/migrations/0002_add_client_drive_folder.sql`
+- `database/migrations/0003_add_nutrition_engine.sql`
+- `database/migrations/0004_portion_audit.sql`
 
 The existing client onboarding process must create a client row and a current `granted` consent record before a sender's photos can be processed. Raw phone numbers are not stored in this database; the sender hash must be generated using the same HMAC secret as the webhook.
 
@@ -101,9 +116,11 @@ Use Cloudflare Worker secrets, not source files or GitHub commits.
 
 ## Next tasks
 
-1. Add automated tests and run a Worker build/type check.
-2. Complete secure client onboarding and consent management.
-3. Configure Google OAuth for the dedicated account.
-4. Verify Meta Coexistence eligibility and complete supervised test onboarding.
-5. Add OpenAI meal analysis with a strict output schema and uncertainty fields.
-6. Build the private dietitian dashboard with manual approval.
+1. Connect the SG FoodID parser to D1 import and searchable food records.
+2. Add automated importer tests using the supplied peanut butter, chicken rice and rice exports.
+3. Wire text-described foods to SG FoodID search and display candidate matches with source provenance.
+4. Complete secure client onboarding and consent management.
+5. Configure Google OAuth for the dedicated account.
+6. Verify Meta Coexistence eligibility and complete supervised test onboarding.
+7. Add OpenAI meal analysis with a strict output schema and uncertainty fields.
+8. Build the private dietitian dashboard with manual approval.
