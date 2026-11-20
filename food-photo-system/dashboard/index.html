@@ -70,7 +70,7 @@ function render(){
    <div class="fields">
     <div class="field"><label for="qty-${f.id}">Portion quantity</label><input id="qty-${f.id}" type="number" min="0" max="100" step="0.05" value="${f.qty}"></div>
     <div class="field"><label for="grams-${f.id}">Edible weight</label><div class="unit"><input id="grams-${f.id}" type="number" min="0" max="5000" step="1" value="${f.grams}"><span>g</span></div></div>
-    <div class="field"><label for="ref-${f.id}">1 ${escapeHtml(f.serving)} =</label><div class="unit"><input id="ref-${f.id}" type="number" min="1" max="5000" step="1" value="${f.ref}"><span>g</span></div></div>
+    <div class="field"><label for="ref-${f.id}">Weight per ${escapeHtml(f.serving)} (if known)</label><div class="unit"><input id="ref-${f.id}" type="number" min="0" max="5000" step="1" value="${f.ref || ""}" placeholder="Enter g"><span>g</span></div></div>
    </div>
    <div class="reference"><span>Serving reference: ${escapeHtml(f.serving)}</span><span>${escapeHtml(f.basis)}</span></div>
    <details class="source"><summary>Inspect original food record and nutrient composition</summary>
@@ -88,7 +88,7 @@ function render(){
   const q=el.querySelector("#qty-"+f.id),g=el.querySelector("#grams-"+f.id),r=el.querySelector("#ref-"+f.id);
   q.addEventListener("input",()=>{const n=Number(q.value);if(valid(n,0,100)){f.qty=n;f.grams=n*f.ref;g.value=fmt(f.grams);updateTotals();}});
   g.addEventListener("input",()=>{const n=Number(g.value);if(valid(n,0,5000)&&f.ref>0){f.grams=n;f.qty=n/f.ref;q.value=Number(f.qty.toFixed(4));updateTotals();}});
-  r.addEventListener("input",()=>{const n=Number(r.value);if(valid(n,1,5000)){f.ref=n;f.grams=f.qty*n;g.value=fmt(f.grams);updateTotals();}});
+  r.addEventListener("input",()=>{const n=r.value===""?0:Number(r.value);if(valid(n,0,5000)){f.ref=n;f.grams=n>0?f.qty*n:0;g.value=f.grams?fmt(f.grams):"";updateTotals();}});
   el.querySelector(".remove").addEventListener("click",()=>{foods=foods.filter(x=>x.id!==f.id);render();});
  });
  updateTotals();
@@ -109,7 +109,11 @@ document.getElementById("addTextMeal").addEventListener("click",()=>{
  const parts=raw.split(/,|\s+and\s+/i).map(x=>x.trim()).filter(Boolean);
  parts.forEach((part,i)=>{
   const id="text-"+Date.now()+"-"+i;
-  foods.push({id,name:part,origin:"Client-reported text",source:"Client-reported text – food database match required",record:"Not selected",description:"Original client text: "+part,serving:"1 serving",ref:100,qty:0,grams:0,basis:"Portion not yet confirmed",per100:Array(10).fill(null)});
+  const match=part.match(/^(\\d+(?:\\.\\d+)?)\\s+(slices?|pieces?|pcs?|bowls?|cups?|tablespoons?|tbsp|teaspoons?|tsp|shares?|servings?)\\s+(.+)$/i);
+  const qty=match?Number(match[1]):0;
+  const unit=match?match[2].toLowerCase():"serving";
+  const foodName=match?match[3].trim():part;
+  foods.push({id,name:foodName,origin:"Client-reported text",source:"Client-reported text – food database match required",record:"Not selected",description:"Original client text: "+part,serving:unit,ref:0,qty,grams:0,basis:"Gram weight and food database match not yet confirmed",per100:Array(10).fill(null)});
  });
  box.value="";render();
  document.getElementById("calcStatus").textContent="Text items added. Confirm food identity, preparation, portion and database record for each item before approval.";
